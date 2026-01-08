@@ -88,7 +88,7 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
 <div id="loginScreen" class="login-form" style="display:none;">
   <h1 style="margin-bottom:20px;">🔐 Autenticação Liga 4x4</h1>
   <p style="margin-bottom:20px;font-size:18px;">Senha do time OU <strong>liga4x4</strong> (admin)</p>
-  <input type="password" id="senhaInput" placeholder="ex: "time1"  maxlength="20">
+  <input type="password" id="senhaInput" placeholder="ex: liga4x4 ou watchatchara" maxlength="20">
   <button class="login-btn" onclick="entrar()">✅ ENTRAR</button>
   <br><button class="btn btn-login" onclick="fecharLogin()" style="margin-top:15px;width:auto;">❌ Cancelar</button>
 </div>
@@ -105,16 +105,20 @@ const db = firebase.firestore();
 const REF = db.collection("ofertasHorario");
 
 const SENHAS_TIMES = {
+  "liga4x4": "ADMIN_COMPLETO",
   "watchatchara": "Watchatchara",
-  "iron": "Iron",
-  "voleitche": "vôlei tche",
-  "summer": "Summer",
-  "conflitus": "Conflitus",
-  "matrix": "Matrix",
-  "baroes": "Barões da largadinha",
-  "filhos": "Filhos da Fênix",
-  "hungers": "Hungers",
-  "falcoes": "Falcões",
+  "time1": "Time 1",
+  "time2": "Time 2",
+  "time3": "Time 3",
+  "time4": "Time 4",
+  "time5": "Time 5",
+  "time6": "Time 6",
+  "time7": "Time 7",
+  "time8": "Time 8",
+  "time9": "Time 9",
+  "time10": "Time 10",
+  "time11": "Time 11",
+  "time12": "Time 12"
 };
 
 let usuarioAtual = null;
@@ -132,20 +136,8 @@ function fecharLogin(){
 function entrar(){
   const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
   
-function entrar(){
-  const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
-  
-  if(senha === "liga4x426"){  // ← MUDA AQUI SUA SENHA
-    usuarioAtual = {senha: senha, timesPermitidos: ["TODOS_TIMES"], isAdmin: true};
-  } else if(SENHAS_TIMES[senha]){
-    usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
-  } else {
-    alert("❌ Senha inválida!\n• admin2026 = ADMIN\n• watchatchara\n• time1...");
-    return;
-  }
-  
-  // Resto igual...
-
+  if(senha === "liga4x4"){
+    usuarioAtual = {senha: "liga4x4", timesPermitidos: Object.values(SENHAS_TIMES).filter(t => typeof t === "string"), isAdmin: true};
   } else if(SENHAS_TIMES[senha]){
     usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
   } else {
@@ -322,7 +314,3 @@ carregarOfertas();
 </script>
 </body>
 </html>
-
-
-
-
