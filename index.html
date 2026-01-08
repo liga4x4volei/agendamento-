@@ -105,7 +105,6 @@ const db = firebase.firestore();
 const REF = db.collection("ofertasHorario");
 
 const SENHAS_TIMES = {
-  "liga4x4": "ADMIN_COMPLETO",
   "watchatchara": "Watchatchara",
   "time1": "Time 1",
   "time2": "Time 2",
@@ -136,8 +135,8 @@ function fecharLogin(){
 function entrar(){
   const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
   
-  if(senha === "liga4x4"){
-    usuarioAtual = {senha: "liga4x4", timesPermitidos: Object.values(SENHAS_TIMES).filter(t => typeof t === "string"), isAdmin: true};
+  if(senha === "liga4x426"){
+    usuarioAtual = {senha: "liga4x426", timesPermitidos: Object.values(SENHAS_TIMES).filter(t => typeof t === "string"), isAdmin: true};
   } else if(SENHAS_TIMES[senha]){
     usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
   } else {
@@ -313,4 +312,5 @@ async function excluirJogo(id){
 carregarOfertas();
 </script>
 </body>
+
 </html>
