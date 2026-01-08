@@ -60,7 +60,7 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
         <div><label>Seu time <span style="color:#ff6b6b;">*</span></label>
           <select id="meuTime" required>
             <option value="">Escolha seu time</option>
-            <option value="Watchatchara">Watchatchara</option>
+            <option value="Time 1">Time 1</option>
             <option value="Time 2">Time 2</option>
             <option value="Time 3">Time 3</option>
             <option value="Time 4">Time 4</option>
@@ -169,8 +169,8 @@ async function carregarOfertas(){
             <div style="margin-top:15px;">
               <select id="aceitarTime_${doc.id}" style="margin-right:10px;width:140px;">
                 <option value="">Escolha time</option>
-                <option value="Time 1">Time 1</option>
-                <option value="Time 2">Time 2</option>
+                <option value="Watchatchara">Watchatchara</option>
+                <option value="Volei Tche">Volei Tche</option>
                 <option value="Time 3">Time 3</option>
                 <option value="Time 4">Time 4</option>
                 <option value="Time 5">Time 5</option>
@@ -220,11 +220,18 @@ async function criarOferta(e){
 }
 
 async function aceitarOferta(id, timeOfertante){
-  const meuTime = document.getElementById(`aceitarTime_${id}`).value;
+  let meuTime = document.getElementById(`aceitarTime_${id}`).value;
+  
+  // Padroniza: 1ª letra maiúscula, resto minúscula
+  if(meuTime) {
+    meuTime = meuTime.charAt(0).toUpperCase() + meuTime.slice(1).toLowerCase();
+  }
+  
   if(!meuTime || meuTime === timeOfertante){
     alert("❌ Escolha um time diferente do ofertante!");
     return;
   }
+  
   if(confirm(`✅ Confirmar jogo?\n${timeOfertante} x ${meuTime}`)){
     try {
       await REF.doc(id).update({
@@ -240,10 +247,10 @@ async function aceitarOferta(id, timeOfertante){
   }
 }
 
+
 // CARREGA AO ABRIR
 carregarOfertas();
 </script>
 </body>
 </html>
-
 
