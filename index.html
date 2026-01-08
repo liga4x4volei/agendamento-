@@ -183,9 +183,31 @@ async function carregarOfertas(){
       const statusText = o.status === 'confirmado' ? '✅ Confirmado' : '⏳ Disponível';
       
       // Só times logados podem aceitar/cancelar/excluir
-      let botoes = '';
-      if(usuarioAtual && !o.aceitoPor){
-        // ACEITAR (todos podem)
+      // ACEITAR disponível para TODOS (com lista fixa de times)
+let botoes = '';
+if(!o.aceitoPor){
+  botoes += `
+    <div class="btn-group">
+      <select id="aceitarTime_${doc.id}" style="flex:1;min-width:120px;">
+        <option value="">Escolha time</option>
+        <option value="Watchatchara">Watchatchara</option>
+        <option value="Time 1">Time 1</option>
+        <option value="Time 2">Time 2</option>
+        <option value="Time 3">Time 3</option>
+        <option value="Time 4">Time 4</option>
+        <option value="Time 5">Time 5</option>
+        <option value="Time 6">Time 6</option>
+        <option value="Time 7">Time 7</option>
+        <option value="Time 8">Time 8</option>
+        <option value="Time 9">Time 9</option>
+        <option value="Time 10">Time 10</option>
+        <option value="Time 11">Time 11</option>
+        <option value="Time 12">Time 12</option>
+      </select>
+      <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITO</button>
+    </div>`;
+}
+
         botoes += `
           <div class="btn-group">
             <select id="aceitarTime_${doc.id}" style="flex:1;min-width:120px;">
