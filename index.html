@@ -43,9 +43,9 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
   <h1>🏐 Liga 4x4 - Agendamentos</h1>
   
   <div class="public-notice">
-    <strong>👀 Público:</strong> Veja todas as ofertas | <strong>🔐 Privado:</strong> 
+    <strong>👀 Público:</strong> Veja + aceite ofertas | <strong>🔐 Privado:</strong> 
     <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:14px;padding:8px 16px;margin:2px;">🔑 AGENDAR</button>
-    <div style="font-size:12px;opacity:0.8;margin-top:5px;">(liga4x4 = admin | time1, time2... = times)</div>
+    <div style="font-size:12px;opacity:0.8;margin-top:5px;">(liga4x4=admin | time1,time2...=times)</div>
   </div>
 
   <h2>⏰ Todas as ofertas</h2>
@@ -53,7 +53,6 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
     <div style="text-align:center;padding:30px;opacity:0.7;">🔄 Carregando ofertas...</div>
   </div>
 
-  <!-- FORM AGENDAR -->
   <div id="formAgendar" style="display:none;">
     <div id="adminBadge" class="admin-badge" style="display:none;">👑 MODO ADMIN</div>
     <h2 style="margin-top:10px;">📢 Ofereça um horário</h2>
@@ -87,14 +86,13 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
 
 <!-- LOGIN POPUP -->
 <div id="loginScreen" class="login-form" style="display:none;">
-  <h1 style="margin-bottom:20px;">🔐 Autenticação</h1>
-  <p style="margin-bottom:20px;font-size:18px;">Senha do time (minúscula) ou <strong>liga4x4</strong> (admin)</p>
+  <h1 style="margin-bottom:20px;">🔐 Autenticação Liga 4x4</h1>
+  <p style="margin-bottom:20px;font-size:18px;">Senha do time OU <strong>liga4x4</strong> (admin)</p>
   <input type="password" id="senhaInput" placeholder="ex: liga4x4 ou watchatchara" maxlength="20">
   <button class="login-btn" onclick="entrar()">✅ ENTRAR</button>
   <br><button class="btn btn-login" onclick="fecharLogin()" style="margin-top:15px;width:auto;">❌ Cancelar</button>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
@@ -143,7 +141,7 @@ function entrar(){
   } else if(SENHAS_TIMES[senha]){
     usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
   } else {
-    alert("❌ Senha inválida!\n• liga4x4 (admin)\n• watchatchara\n• time1, time2...");
+    alert("❌ Senha inválida!\n• liga4x4 = ADMIN\n• watchatchara\n• time1, time2...");
     return;
   }
   
@@ -159,7 +157,7 @@ function entrar(){
   
   fecharLogin();
   document.getElementById('formAgendar').style.display = 'block';
-  alert(`✅ Login OK: ${usuarioAtual.isAdmin ? 'ADMIN' : usuarioAtual.timesPermitidos[0]}`);
+  alert(`✅ ${usuarioAtual.isAdmin ? 'ADMIN' : usuarioAtual.timesPermitidos[0]} logado!`);
 }
 
 async function carregarOfertas(){
@@ -169,7 +167,7 @@ async function carregarOfertas(){
   try {
     const snap = await REF.orderBy("dataCriacao", "desc").get();
     if(snap.empty){
-      lista.innerHTML = '<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta. <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:12px;padding:6px 12px;">Ofereça a 1ª!</button></div>';
+      lista.innerHTML = '<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta. <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:12px;padding:6px 12px;">1ª oferta!</button></div>';
       return;
     }
     
@@ -182,6 +180,8 @@ async function carregarOfertas(){
       const statusText = o.status === 'confirmado' ? '✅ Confirmado' : '⏳ Disponível';
       
       let botoes = '';
+      
+      // ✅ ACEITAR - disponível para TODOS (público)
       if(!o.aceitoPor){
         botoes = `
           <div class="btn-group">
@@ -205,12 +205,14 @@ async function carregarOfertas(){
           </div>`;
       }
       
+      // ❌ CANCELAR - dono da oferta OU admin
       if(usuarioAtual && !o.aceitoPor && (usuarioAtual.isAdmin || usuarioAtual.timesPermitidos.includes(o.timeOfertante))){
         botoes += `<button class="btn btn-cancelar" onclick="cancelarOferta('${doc.id}')" style="width:100%;margin-top:8px;">❌ CANCELAR</button>`;
       }
       
-      if(usuarioAtual && o.aceitoPor && usuarioAtual.isAdmin){
-        botoes += `<button class="btn btn-cancelar" onclick="excluirConfirmado('${doc.id}')" style="width:100%;margin-top:8px;">🗑️ EXCLUIR</button>`;
+      // 🗑️ EXCLUIR - APENAS ADMIN (TODOS os jogos)
+      if(usuarioAtual && usuarioAtual.isAdmin){
+        botoes += `<button class="btn btn-cancelar" onclick="excluirJogo('${doc.id}')" style="width:100%;margin-top:8px;">🗑️ EXCLUIR (ADMIN)</button>`;
       }
       
       html += `
@@ -228,14 +230,14 @@ async function carregarOfertas(){
     });
     lista.innerHTML = html;
   } catch(error) {
-    lista.innerHTML = '<div style="text-align:center;padding:30px;color:#ff6b6b;">❌ Erro de conexão.</div>';
+    lista.innerHTML = '<div style="text-align:center;padding:30px;color:#ff6b6b;">❌ Erro conexão.</div>';
   }
 }
 
 async function criarOferta(e){
   e.preventDefault();
   if(!usuarioAtual){
-    alert("❌ Faça login!");
+    alert("❌ Login necessário!");
     mostrarLogin();
     return;
   }
@@ -258,27 +260,27 @@ async function criarOferta(e){
     e.target.reset();
     carregarOfertas();
   } catch(error) {
-    alert("❌ Erro ao salvar.");
+    alert("❌ Erro salvar.");
   }
 }
 
 async function aceitarOferta(id, timeOfertante){
   const meuTime = document.getElementById(`aceitarTime_${id}`).value;
   if(!meuTime || meuTime === timeOfertante){
-    alert("❌ Escolha time diferente!");
+    alert("❌ Time diferente!");
     return;
   }
-  if(confirm(`✅ Confirmar?\n${timeOfertante} x ${meuTime}`)){
+  if(confirm(`✅ ${timeOfertante} x ${meuTime}`)){
     try {
       await REF.doc(id).update({
         status: "confirmado",
         aceitoPor: meuTime,
         dataAceite: firebase.firestore.FieldValue.serverTimestamp()
       });
-      alert("🎉 Jogo confirmado!");
+      alert("🎉 Confirmado!");
       carregarOfertas();
     } catch(error) {
-      alert("❌ Erro ao confirmar.");
+      alert("❌ Erro confirmar.");
     }
   }
 }
@@ -295,14 +297,14 @@ async function cancelarOferta(id){
   }
 }
 
-async function excluirConfirmado(id){
-  if(confirm("🗑️ EXCLUIR JOGO CONFIRMADO?")){
+async function excluirJogo(id){
+  if(confirm("🗑️ EXCLUIR JOGO (ADMIN)?")){
     try {
       await REF.doc(id).delete();
-      alert("✅ Excluído!");
+      alert("✅ Excluído pelo ADMIN!");
       carregarOfertas();
     } catch(error) {
-      alert("❌ Erro.");
+      alert("❌ Erro excluir.");
     }
   }
 }
