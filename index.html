@@ -6,11 +6,10 @@
 <title>🏐 Ofertas de Horário – Liga 4x4</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: *.google.com *.gstatic.com *.firebaseio.com *.firebaseapp.com *.googleapis.com;">
 <style>
-/* MESMO CSS anterior - sem mudanças */
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial;}
 body{background:linear-gradient(90deg,#004aad 0%,#0d99ff 100%);min-height:100vh;padding:20px;color:#fff;}
 .container{max-width:600px;margin:0 auto;background:rgba(255,255,255,0.1);border-radius:20px;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,0.3);backdrop-filter:blur(15px);}
-.login-form{display:none;text-align:center;}
+.login-form{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;justify-content:center;align-items:center;flex-direction:column;}
 .login-form input{width:280px;max-width:90vw;padding:15px;border-radius:12px;border:none;font-size:18px;margin-bottom:15px;background:rgba(255,255,255,0.9);}
 .login-btn{width:280px;max-width:90vw;padding:15px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,#28a745,#20c997);color:#fff;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(40,167,69,0.4);}
 .login-btn:hover{transform:translateY(-2px);}
@@ -24,6 +23,7 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
 .btn-primary{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;}
 .btn-primary:hover{transform:translateY(-2px);}
 .btn-login{background:linear-gradient(135deg,#ffc107,#ff8f00);color:#000;}
+.btn-cancelar{background:#dc3545;color:#fff;}
 .ofertas{max-height:60vh;overflow-y:auto;}
 .oferta{background:rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-bottom:15px;box-shadow:0 10px 25px rgba(0,0,0,0.2);border-left:5px solid #ff6b6b;}
 .oferta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
@@ -38,13 +38,14 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
 </head>
 <body>
 
-<!-- LISTA PÚBLICA (sempre visível) -->
+<!-- LISTA PÚBLICA -->
 <div id="appMain" class="container">
   <h1>🏐 Ofertas de Horário – Liga 4x4</h1>
   
   <div class="public-notice">
     <strong>👀 Público:</strong> Veja todas as ofertas<br>
-    <strong>🔐 Privado:</strong> <a href="#" onclick="mostrarLogin()" style="color:#ffc107;">Clique para agendar (senha liga123)</a>
+    <strong>🔐 Privado:</strong> 
+    <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:14px;padding:8px 16px;margin-top:5px;">🔑 AGENDAR (liga123)</button>
   </div>
 
   <h2>⏰ Todas as ofertas</h2>
@@ -57,10 +58,12 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
     <h2 style="margin-top:30px;">📢 Ofereça um horário</h2>
     <form onsubmit="criarOferta(event)">
       <div class="form-row">
-        <div><label>Seu time <span style="color:#ff6b6b;">*</span></label>
+        <div>
+          <label>Seu time <span style="color:#ff6b6b;">*</span></label>
           <select id="meuTime" required>
             <option value="">Escolha seu time</option>
-            <option value="Time 1">Time 1</option>
+            <!-- AQUI VOCÊ COLOCA SEUS TIMES -->
+            <option value="Watchatchara">Watchatchara</option>
             <option value="Time 2">Time 2</option>
             <option value="Time 3">Time 3</option>
             <option value="Time 4">Time 4</option>
@@ -73,33 +76,29 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
             <option value="Time 11">Time 11</option>
             <option value="Time 12">Time 12</option>
           </select>
-        <div><label>Quadra <span style="color:#ff6b6b;">*</span></label>
-  <select id="quadra" required>
-    <option value="">Escolha quadra</option>
-    <option value="Arena Belém">Arena Belém</option>
-    <option value="Arena Meteoro">Arena Meteoro</option>
-    <option value="Mega Sports">Mega Sports</option>
-    <option value="Praia Belém">Praia Belém</option>
-  </select>
-</div>
-
-
+        </div>
+        <div>
+          <label>Quadra <span style="color:#ff6b6b;">*</span></label>
+          <select id="quadra" required>
+            <option value="">Escolha quadra</option>
+            <option value="Arena Belém">Arena Belém</option>
+            <option value="Arena Meteoro">Arena Meteoro</option>
+            <option value="Mega Sports">Mega Sports</option>
+            <option value="Praia Belém">Praia Belém</option>
+          </select>
+        </div>
       </div>
       <div class="form-row">
-        <div><label>Data <span style="color:#ff6b6b;">*</span></label>
-          <input id="data" type="date" required>
-        </div>
-        <div><label>Hora <span style="color:#ff6b6b;">*</span></label>
-          <input id="hora" type="time" required>
-        </div>
+        <div><label>Data <span style="color:#ff6b6b;">*</span></label><input id="data" type="date" required></div>
+        <div><label>Hora <span style="color:#ff6b6b;">*</span></label><input id="hora" type="time" required></div>
         <button type="submit" class="btn btn-primary">🚀 OFERECER</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- LOGIN (popup) -->
-<div id="loginScreen" class="login-form" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;z-index:9999;justify-content:center;align-items:center;flex-direction:column;">
+<!-- LOGIN POPUP -->
+<div id="loginScreen" class="login-form" style="display:none;">
   <h1 style="margin-bottom:20px;">🔐 Digite a senha</h1>
   <p style="margin-bottom:20px;font-size:18px;">Senha: <strong>liga123</strong></p>
   <input type="password" id="senhaInput" placeholder="liga123" maxlength="20" style="margin-bottom:20px;">
@@ -107,9 +106,9 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
   <br><button class="btn btn-login" onclick="mostrarLogin()" style="margin-top:15px;width:auto;">❌ Cancelar</button>
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 <script>
 firebase.initializeApp({
   apiKey: "AIzaSyCovHcUFKP9dtwRxfnajhvGUgluCFp0HVQ",
@@ -143,7 +142,7 @@ async function carregarOfertas(){
   try {
     const snap = await REF.orderBy("dataCriacao", "desc").get();
     if(snap.empty){
-      lista.innerHTML='<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta ainda. <a href="#" onclick="mostrarLogin()" style="color:#ffc107;">Seja o primeiro!</a></div>';
+      lista.innerHTML='<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta ainda. <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:12px;padding:6px 12px;">Seja o primeiro!</button></div>';
       return;
     }
     
@@ -166,11 +165,11 @@ async function carregarOfertas(){
             🏐 ${o.timeOfertante} ${o.aceitoPor ? `x <strong>${o.aceitoPor}</strong>` : '(aguardando)'}
           </div>
           ${!o.aceitoPor ? `
-            <div style="margin-top:15px;">
-              <select id="aceitarTime_${doc.id}" style="margin-right:10px;width:140px;">
+            <div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="aceitarTime_${doc.id}" style="flex:1;min-width:120px;">
                 <option value="">Escolha time</option>
                 <option value="Watchatchara">Watchatchara</option>
-                <option value="Volei Tche">Volei Tche</option>
+                <option value="Time 2">Time 2</option>
                 <option value="Time 3">Time 3</option>
                 <option value="Time 4">Time 4</option>
                 <option value="Time 5">Time 5</option>
@@ -182,7 +181,8 @@ async function carregarOfertas(){
                 <option value="Time 11">Time 11</option>
                 <option value="Time 12">Time 12</option>
               </select>
-              <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITO</button>
+              <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')" style="white-space:nowrap;">✅ ACEITO</button>
+              <button class="btn btn-cancelar" onclick="cancelarOferta('${doc.id}')" style="padding:12px 16px;">❌ CANCELAR</button>
             </div>
           ` : ''}
         </div>
@@ -190,14 +190,14 @@ async function carregarOfertas(){
     });
     lista.innerHTML = html;
   } catch(error) {
-    lista.innerHTML = '<div style="text-align:center;padding:30px;color:#ff6b6b;">❌ Erro de conexão.</div>';
+    lista.innerHTML = '<div style="text-align:center;padding:30px;color:#ff6b6b;">❌ Erro de conexão. Tente novamente.</div>';
   }
 }
 
 async function criarOferta(e){
   e.preventDefault();
   const timeOfertante = document.getElementById('meuTime').value;
-  if(!timeOfertante){ alert("Escolha seu time!"); return; }
+  if(!timeOfertante){ alert("❌ Escolha seu time!"); return; }
   
   const dados = {
     timeOfertante,
@@ -211,22 +211,16 @@ async function criarOferta(e){
   
   try {
     await REF.add(dados);
-    alert("✅ Oferta criada!");
+    alert("✅ Oferta criada com sucesso!");
     e.target.reset();
     carregarOfertas();
   } catch(error) {
-    alert("❌ Erro ao salvar.");
+    alert("❌ Erro ao salvar. Tente novamente.");
   }
 }
 
 async function aceitarOferta(id, timeOfertante){
-  let meuTime = document.getElementById(`aceitarTime_${id}`).value;
-  
-  // Padroniza: 1ª letra maiúscula, resto minúscula
-  if(meuTime) {
-    meuTime = meuTime.charAt(0).toUpperCase() + meuTime.slice(1).toLowerCase();
-  }
-  
+  const meuTime = document.getElementById(`aceitarTime_${id}`).value;
   if(!meuTime || meuTime === timeOfertante){
     alert("❌ Escolha um time diferente do ofertante!");
     return;
@@ -239,18 +233,28 @@ async function aceitarOferta(id, timeOfertante){
         aceitoPor: meuTime,
         dataAceite: firebase.firestore.FieldValue.serverTimestamp()
       });
-      alert("🎉 Jogo marcado!");
+      alert("🎉 Jogo marcado com sucesso!");
       carregarOfertas();
     } catch(error) {
-      alert("❌ Erro ao confirmar.");
+      alert("❌ Erro ao confirmar. Tente novamente.");
     }
   }
 }
 
+async function cancelarOferta(id){
+  if(confirm("❌ Tem certeza que deseja cancelar esta oferta?")){
+    try {
+      await REF.doc(id).delete();
+      alert("✅ Oferta cancelada!");
+      carregarOfertas();
+    } catch(error) {
+      alert("❌ Erro ao cancelar. Tente novamente.");
+    }
+  }
+}
 
-// CARREGA AO ABRIR
+// ✅ CARREGA OFERTAS AO ABRIR PÁGINA
 carregarOfertas();
 </script>
 </body>
 </html>
-
