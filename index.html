@@ -132,8 +132,20 @@ function fecharLogin(){
 function entrar(){
   const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
   
-  if(senha === "liga4x4"){
-    usuarioAtual = {senha: "liga4x4", timesPermitidos: Object.values(SENHAS_TIMES).filter(t => typeof t === "string"), isAdmin: true};
+function entrar(){
+  const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
+  
+  if(senha === "liga4x426"){  // ← MUDA AQUI SUA SENHA
+    usuarioAtual = {senha: senha, timesPermitidos: ["TODOS_TIMES"], isAdmin: true};
+  } else if(SENHAS_TIMES[senha]){
+    usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
+  } else {
+    alert("❌ Senha inválida!\n• admin2026 = ADMIN\n• watchatchara\n• time1...");
+    return;
+  }
+  
+  // Resto igual...
+
   } else if(SENHAS_TIMES[senha]){
     usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
   } else {
@@ -310,6 +322,7 @@ carregarOfertas();
 </script>
 </body>
 </html>
+
 
 
 
