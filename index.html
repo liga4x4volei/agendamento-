@@ -128,7 +128,14 @@ const SENHAS_TIMES = {
 let usuarioAtual = null;  // {senha, timesPermitidos, isAdmin}
 
 function mostrarLogin(){
-  document.getElementById('loginScreen').style.display = 'flex';
+  console.log("mostrarLogin chamado!");  // DEBUG
+  const popup = document.getElementById('loginScreen');
+  if(popup){
+    popup.style.display = 'flex';
+    console.log("Pop-up mostrado!");
+  } else {
+    alert("❌ ERRO: Elemento loginScreen não encontrado!");
+  }
 }
 
 function entrar(){
@@ -332,4 +339,5 @@ carregarOfertas();
 </script>
 </body>
 </html>
+
 
