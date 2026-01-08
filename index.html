@@ -43,10 +43,9 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
   <h1>🏐 Liga 4x4 - Agendamentos</h1>
   
   <div class="public-notice">
-    <strong>👀 Público:</strong> Veja todas as ofertas<br>
-    <strong>🔐 Privado:</strong> 
-    <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:14px;padding:8px 16px;margin-top:5px;">🔑 AGENDAR</button>
-    <div style="font-size:12px;opacity:0.8;margin-top:5px;">Senha = nome do time (minúsculo)</div>
+    <strong>👀 Público:</strong> Veja todas as ofertas | <strong>🔐 Privado:</strong> 
+    <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:14px;padding:8px 16px;margin:2px;">🔑 AGENDAR</button>
+    <div style="font-size:12px;opacity:0.8;margin-top:5px;">(liga4x4 = admin | time1, time2... = times)</div>
   </div>
 
   <h2>⏰ Todas as ofertas</h2>
@@ -54,7 +53,7 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
     <div style="text-align:center;padding:30px;opacity:0.7;">🔄 Carregando ofertas...</div>
   </div>
 
-  <!-- FORM AGENDAR (escondido até senha) -->
+  <!-- FORM AGENDAR -->
   <div id="formAgendar" style="display:none;">
     <div id="adminBadge" class="admin-badge" style="display:none;">👑 MODO ADMIN</div>
     <h2 style="margin-top:10px;">📢 Ofereça um horário</h2>
@@ -90,9 +89,9 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(25
 <div id="loginScreen" class="login-form" style="display:none;">
   <h1 style="margin-bottom:20px;">🔐 Autenticação</h1>
   <p style="margin-bottom:20px;font-size:18px;">Senha do time (minúscula) ou <strong>liga4x4</strong> (admin)</p>
-  <input type="password" id="senhaInput" placeholder="ex: watchatchara" maxlength="20" style="margin-bottom:20px;">
+  <input type="password" id="senhaInput" placeholder="ex: liga4x4 ou watchatchara" maxlength="20">
   <button class="login-btn" onclick="entrar()">✅ ENTRAR</button>
-  <br><button class="btn btn-login" onclick="mostrarLogin()" style="margin-top:15px;width:auto;">❌ Cancelar</button>
+  <br><button class="btn btn-login" onclick="fecharLogin()" style="margin-top:15px;width:auto;">❌ Cancelar</button>
 </div>
 
 <!-- FIREBASE -->
@@ -107,13 +106,12 @@ firebase.initializeApp({
 const db = firebase.firestore();
 const REF = db.collection("ofertasHorario");
 
-// 🔐 SENHAS POR TIME (minúsculas)
 const SENHAS_TIMES = {
-  "liga4x4": "ADMIN_COMPLETO",  // Admin faz tudo
+  "liga4x4": "ADMIN_COMPLETO",
   "watchatchara": "Watchatchara",
   "time1": "Time 1",
   "time2": "Time 2",
-  "time3": "Time 3", 
+  "time3": "Time 3",
   "time4": "Time 4",
   "time5": "Time 5",
   "time6": "Time 6",
@@ -125,55 +123,43 @@ const SENHAS_TIMES = {
   "time12": "Time 12"
 };
 
-let usuarioAtual = null;  // {senha, timesPermitidos, isAdmin}
+let usuarioAtual = null;
 
 function mostrarLogin(){
-  const popup = document.getElementById('loginScreen');
-  if(popup){
-    popup.style.display = 'flex';
-    document.getElementById('senhaInput').focus();  // Cursor no input
-  } else {
-    alert("🔧 Carregando... Tente novamente!");
-  }
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('senhaInput').focus();
 }
-  if(popup){
-    popup.style.display = 'flex';
-    console.log("Pop-up mostrado!");
-  } else {
-    alert("❌ ERRO: Elemento loginScreen não encontrado!");
-  }
+
+function fecharLogin(){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('senhaInput').value = '';
 }
 
 function entrar(){
   const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
-  const infoUsuario = SENHAS_TIMES[senha];
   
-  if(!infoUsuario){
-    alert("❌ Senha inválida!\nDica: nome do time em minúsculas ou 'liga4x4'");
+  if(senha === "liga4x4"){
+    usuarioAtual = {senha: "liga4x4", timesPermitidos: Object.values(SENHAS_TIMES).filter(t => typeof t === "string"), isAdmin: true};
+  } else if(SENHAS_TIMES[senha]){
+    usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
+  } else {
+    alert("❌ Senha inválida!\n• liga4x4 (admin)\n• watchatchara\n• time1, time2...");
     return;
   }
   
-  usuarioAtual = {
-    senha: senha,
-    timesPermitidos: infoUsuario === "ADMIN_COMPLETO" ? Object.values(SENHAS_TIMES).filter(t => typeof t === "string") : [infoUsuario],
-    isAdmin: infoUsuario === "ADMIN_COMPLETO"
-  };
-  
-  // Mostra badge admin
   if(usuarioAtual.isAdmin){
     document.getElementById('adminBadge').style.display = 'inline-block';
   }
   
-  // Preenche select com times permitidos
   const select = document.getElementById('meuTime');
   select.innerHTML = '<option value="">Escolha seu time</option>';
   usuarioAtual.timesPermitidos.forEach(time => {
     select.innerHTML += `<option value="${time}">${time}</option>`;
   });
   
-  document.getElementById('loginScreen').style.display = 'none';
+  fecharLogin();
   document.getElementById('formAgendar').style.display = 'block';
-  alert(`✅ Bem-vindo(a), ${usuarioAtual.isAdmin ? 'ADMIN' : usuarioAtual.timesPermitidos[0]}!`);
+  alert(`✅ Login OK: ${usuarioAtual.isAdmin ? 'ADMIN' : usuarioAtual.timesPermitidos[0]}`);
 }
 
 async function carregarOfertas(){
@@ -183,11 +169,11 @@ async function carregarOfertas(){
   try {
     const snap = await REF.orderBy("dataCriacao", "desc").get();
     if(snap.empty){
-      lista.innerHTML = '<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta ainda. <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:12px;padding:6px 12px;">Ofereça a primeira!</button></div>';
+      lista.innerHTML = '<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta. <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:12px;padding:6px 12px;">Ofereça a 1ª!</button></div>';
       return;
     }
     
-    let html = `<div style="text-align:center;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:15px;">Total: <strong>${snap.size}</strong> oferta${snap.size > 1 ? 's' : ''}</div>`;
+    let html = `<div style="text-align:center;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:15px;">Total: <strong>${snap.size}</strong> oferta${snap.size>1?'s':''}</div>`;
     
     snap.forEach(doc => {
       const o = doc.data();
@@ -195,50 +181,36 @@ async function carregarOfertas(){
       const statusClass = o.status === 'confirmado' ? 'status-confirmado' : 'status-disponivel';
       const statusText = o.status === 'confirmado' ? '✅ Confirmado' : '⏳ Disponível';
       
-      // Só times logados podem aceitar/cancelar/excluir
-      // ACEITAR disponível para TODOS (com lista fixa de times)
-let botoes = '';
-if(!o.aceitoPor){
-  botoes += `
-    <div class="btn-group">
-      <select id="aceitarTime_${doc.id}" style="flex:1;min-width:120px;">
-        <option value="">Escolha time</option>
-        <option value="Watchatchara">Watchatchara</option>
-        <option value="Time 1">Time 1</option>
-        <option value="Time 2">Time 2</option>
-        <option value="Time 3">Time 3</option>
-        <option value="Time 4">Time 4</option>
-        <option value="Time 5">Time 5</option>
-        <option value="Time 6">Time 6</option>
-        <option value="Time 7">Time 7</option>
-        <option value="Time 8">Time 8</option>
-        <option value="Time 9">Time 9</option>
-        <option value="Time 10">Time 10</option>
-        <option value="Time 11">Time 11</option>
-        <option value="Time 12">Time 12</option>
-      </select>
-      <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITO</button>
-    </div>`;
-}
-
-        botoes += `
+      let botoes = '';
+      if(!o.aceitoPor){
+        botoes = `
           <div class="btn-group">
             <select id="aceitarTime_${doc.id}" style="flex:1;min-width:120px;">
               <option value="">Escolha time</option>
-              ${usuarioAtual.timesPermitidos.map(t => `<option value="${t}">${t}</option>`).join('')}
+              <option value="Watchatchara">Watchatchara</option>
+              <option value="Time 1">Time 1</option>
+              <option value="Time 2">Time 2</option>
+              <option value="Time 3">Time 3</option>
+              <option value="Time 4">Time 4</option>
+              <option value="Time 5">Time 5</option>
+              <option value="Time 6">Time 6</option>
+              <option value="Time 7">Time 7</option>
+              <option value="Time 8">Time 8</option>
+              <option value="Time 9">Time 9</option>
+              <option value="Time 10">Time 10</option>
+              <option value="Time 11">Time 11</option>
+              <option value="Time 12">Time 12</option>
             </select>
             <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITO</button>
           </div>`;
       }
       
-      // CANCELAR (quem ofereceu OU admin)
       if(usuarioAtual && !o.aceitoPor && (usuarioAtual.isAdmin || usuarioAtual.timesPermitidos.includes(o.timeOfertante))){
         botoes += `<button class="btn btn-cancelar" onclick="cancelarOferta('${doc.id}')" style="width:100%;margin-top:8px;">❌ CANCELAR</button>`;
       }
       
-      // EXCLUIR CONFIRMADO (só admin)
       if(usuarioAtual && o.aceitoPor && usuarioAtual.isAdmin){
-        botoes += `<button class="btn btn-cancelar" onclick="excluirConfirmado('${doc.id}')" style="width:100%;margin-top:8px;">🗑️ EXCLUIR JOGO</button>`;
+        botoes += `<button class="btn btn-cancelar" onclick="excluirConfirmado('${doc.id}')" style="width:100%;margin-top:8px;">🗑️ EXCLUIR</button>`;
       }
       
       html += `
@@ -263,16 +235,12 @@ if(!o.aceitoPor){
 async function criarOferta(e){
   e.preventDefault();
   if(!usuarioAtual){
-    alert("❌ Faça login primeiro!");
+    alert("❌ Faça login!");
     mostrarLogin();
     return;
   }
-  
   const timeOfertante = document.getElementById('meuTime').value;
-  if(!timeOfertante){
-    alert("❌ Escolha seu time!");
-    return;
-  }
+  if(!timeOfertante){ alert("❌ Escolha time!"); return; }
   
   const dados = {
     timeOfertante,
@@ -300,7 +268,6 @@ async function aceitarOferta(id, timeOfertante){
     alert("❌ Escolha time diferente!");
     return;
   }
-  
   if(confirm(`✅ Confirmar?\n${timeOfertante} x ${meuTime}`)){
     try {
       await REF.doc(id).update({
@@ -323,28 +290,24 @@ async function cancelarOferta(id){
       alert("✅ Cancelada!");
       carregarOfertas();
     } catch(error) {
-      alert("❌ Erro ao cancelar.");
+      alert("❌ Erro.");
     }
   }
 }
 
 async function excluirConfirmado(id){
-  if(confirm("🗑️ EXCLUIR JOGO CONFIRMADO?\nNão pode desfazer!")){
+  if(confirm("🗑️ EXCLUIR JOGO CONFIRMADO?")){
     try {
       await REF.doc(id).delete();
-      alert("✅ Jogo excluído!");
+      alert("✅ Excluído!");
       carregarOfertas();
     } catch(error) {
-      alert("❌ Erro ao excluir.");
+      alert("❌ Erro.");
     }
   }
 }
 
-// ✅ INICIALIZA
 carregarOfertas();
 </script>
 </body>
 </html>
-
-
-
