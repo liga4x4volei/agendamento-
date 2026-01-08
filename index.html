@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏐 Ofertas de Horário – Liga 4x4</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial;}
+body{background:linear-gradient(90deg,#004aad 0%,#0d99ff 100%);min-height:100vh;padding:20px;color:#fff;}
+.container{max-width:600px;margin:0 auto;background:rgba(255,255,255,0.1);border-radius:20px;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,0.3);backdrop-filter:blur(15px);}
+.login-form{text-align:center;}
+.login-form input{width:280px;max-width:90vw;padding:15px;border-radius:12px;border:none;font-size:18px;margin-bottom:15px;background:rgba(255,255,255,0.9);}
+.login-btn{width:280px;max-width:90vw;padding:15px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,#28a745,#20c997);color:#fff;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(40,167,69,0.4);}
+.login-btn:hover{transform:translateY(-2px);}
+.app-main{display:none;}
+h1{text-align:center;font-size:28px;font-weight:800;margin-bottom:10px;}
+h2{text-align:center;font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
+.form-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;margin-bottom:12px;}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:4px;}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.9);font-size:16px;}
+.btn{padding:12px 24px;border:none;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.3);transition:.3s;}
+.btn-primary{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;}
+.btn-primary:hover{transform:translateY(-2px);}
+.ofertas{max-height:60vh;overflow-y:auto;}
+.oferta{background:rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-bottom:15px;box-shadow:0 10px 25px rgba(0,0,0,0.2);border-left:5px solid #ff6b6b;}
+.oferta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.oferta-header h3{margin:0;font-size:20px;}
+.status{padding:6px 12px;border-radius:20px;font-size:14px;font-weight:700;}
+.status-disponivel{background:rgba(255,193,7,0.3);color:#ffc107;}
+.status-confirmado{background:rgba(40,167,69,0.3);color:#28a745;}
+.oferta-detalhes{font-size:14px;opacity:0.9;}
+@media(max-width:500px){.form-row{grid-template-columns:1fr;}.oferta-header{flex-direction:column;gap:8px;text-align:center;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="container login-form">
+  <h1>🔐 Liga 4x4 – Agendamentos</h1>
+  <p style="margin-bottom:30px;opacity:0.9;">Senha única: <strong>liga123</strong></p>
+  <input type="password" id="senhaInput" placeholder="Digite liga123" maxlength="20">
+  <br><button class="login-btn" onclick="entrar()">ENTRAR</button>
+  <p style="margin-top:20px;font-size:14px;opacity:0.7;">Senha: liga123</p>
+</div>
+
+<!-- APP -->
+<div id="appMain" class="container">
+  <h1>🏐 Ofertas de Horário</h1>
+  <form onsubmit="criarOferta(event)">
+    <h2>📢 Ofereça um horário</h2>
+    <div class="form-row">
+      <div><label>Seu time</label><select id="meuTime" required><option value="">Escolha</option></select></div>
+      <div><label>Quadra</label><input id="quadra" required placeholder="Quadra 1"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Data</label><input id="data" type="date" required></div>
+      <div><label>Hora</label><input id="hora" type="time" required></div>
+      <button type="submit" class="btn btn-primary">🚀 OFERECER</button>
+    </div>
+  </form>
+  <h2>⏰ Horários disponíveis</h2>
+  <div id="listaOfertas" class="ofertas"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+// Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyCovHcUFKP9dtwRxfnajhvGUgluCFp0HVQ",
+  authDomain: "liga4x4volei-71358.firebaseapp.com",
+  projectId: "liga4x4volei-71358"
+});
+const db = firebase.firestore();
+const REF = db.collection("ofertasHorario");
+
+// === SENHA ÚNICA (já funcionando!) ===
+const SENHA_CORRETA = "liga123"; // ← MUDE AQUI SUA SENHA!
+
+const TIMES = ["Time 1","Time 2","Time 3","Time 4","Time 5","Time 6","Time 7","Time 8","Time 9","Time 10","Time 11","Time 12"];
+
+// Login
+function entrar(){
+  const senha = document.getElementById('senhaInput').value;
+  if(senha !== SENHA_CORRETA){
+    alert("❌ Senha errada! (dica: liga123)");
+    return;
+  }
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appMain').style.display='block';
+  document.getElementById('meuTime').innerHTML = '<option value="">Escolha seu time</option>' + 
+    TIMES.map(t=>`<option value="${t}">${t}</option>`).join('');
+  carregarOfertas();
+}
+
+// Cria oferta
+async function criarOferta(e){
+  e.preventDefault();
+  const dados = {
+    timeOfertante: document.getElementById('meuTime').value,
+    quadra: document.getElementById('quadra').value,
+    data: document.getElementById('data').value,
+    hora: document.getElementById('hora').value,
+    status: "disponivel",  // ← CORRIGIDO!
+    aceitoPor: null,
+    dataCriacao: new Date().toISOString()
+  };
+  await REF.add(dados);
+  alert("✅ Oferta criada!");
+  e.target.reset();
+  carregarOfertas();
+}
+
+// Aceita
+async function aceitarOferta(id, timeOfertante){
+  const meuTime = document.getElementById('meuTime').value;
+  if(!meuTime || meuTime===timeOfertante){
+    alert("Escolha outro time!");
+    return;
+  }
+  if(confirm(`Confirmar ${timeOfertante} x ${meuTime}?`)){
+    await REF.doc(id).update({
+      status: "confirmado",
+      aceitoPor: meuTime,
+      dataAceite: new Date().toISOString()
+    });
+    alert("✅ Jogo marcado!");
+    carregarOfertas();
+  }
+}
+
+// Lista ofertas
+async function carregarOfertas(){
+  const lista = document.getElementById('listaOfertas');
+  lista.innerHTML='<div style="text-align:center;padding:20px;">Carregando...</div>';
+  
+  const snap = await REF.where("status","==","disponivel").orderBy("dataCriacao","desc").get();
+  if(snap.empty){
+    lista.innerHTML='<div style="text-align:center;padding:30px;opacity:0.7;">Nenhuma oferta. Faça a primeira!</div>';
+    return;
+  }
+  
+  let html='';
+  snap.forEach(doc=>{
+    const o=doc.data();
+    const dataFmt=new Date(o.data).toLocaleDateString('pt-BR');
+    html+=`
+      <div class="oferta">
+        <div class="oferta-header">
+          <h3>${o.quadra} – ${o.hora}</h3>
+          <span class="status status-disponivel">Disponível</span>
+        </div>
+        <div class="oferta-detalhes">
+          📅 ${dataFmt}<br>🏐 ${o.timeOfertante}
+        </div>
+        <div style="margin-top:15px;">
+          <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}','${o.timeOfertante}')">
+            ✅ ACEITO
+          </button>
+        </div>
+      </div>`;
+  });
+  lista.innerHTML=html;
+}
+</script>
+</body>
+</html>
