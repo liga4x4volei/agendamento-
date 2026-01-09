@@ -36,10 +36,10 @@ h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
 }
 .oferta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .oferta-header h3{margin:0;font-size:20px;}
-.status{padding:6px 12px;border-radius:20px;font-size:14px;font-weight:700;}
+.status{padding:6px 12px;border-radius:20px;font-size:18px;font-weight:700;}
 .status-disponivel{background:rgba(255,193,7,0.3);color:#ffc107;}
 .status-confirmado{background:rgba(40,167,69,0.3);color:#28a745;}
-.oferta-detalhes{font-size:14px;opacity:0.9;}
+.oferta-detalhes{font-size:18px;opacity:0.9;}
 .btn-group{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
 
 /* Botões */
@@ -430,7 +430,7 @@ async function limparAntigos() {
   const agora = Date.now();
   for (const doc of snap.docs) {
     const d = doc.data();
-    if (d.dataAceite && (agora - d.dataAceite.toDate().getTime()) > 3 * 24 * 60 * 60 * 1000) {
+    if (d.dataAceite && (agora - d.dataAceite.toDate().getTime()) > 8 * 24 * 60 * 60 * 1000) {
       await REF.doc(doc.id).delete();
     }
   }
@@ -444,3 +444,4 @@ setInterval(limparAntigos, 1000 * 60 * 60); // limpa a cada hora
 document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </html>
+
