@@ -4,94 +4,120 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🏐 Liga 4x4 - Agendamentos</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https: *.google.com *.gstatic.com *.firebaseio.com *.firebaseapp.com *.googleapis.com *.googleusercontent.com *.firebase.google.com;">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https: *.google.com *.gstatic.com *.firebaseio.com *.firebaseapp.com *.googleapis.com *.googleusercontent.com;">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial;}
-body{background:linear-gradient(90deg,#004aad 0%,#0d99ff 100%);min-height:100vh;padding:20px;color:#fff;}
-.container{max-width:650px;margin:0 auto;background:rgba(255,255,255,0.1);border-radius:20px;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,0.3);backdrop-filter:blur(15px);}
-.login-form{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;justify-content:center;align-items:center;flex-direction:column;}
-.login-form input{width:300px;max-width:90vw;padding:15px;border-radius:12px;border:none;font-size:18px;margin-bottom:15px;background:rgba(255,255,255,0.9);}
-.login-btn{width:300px;max-width:90vw;padding:15px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,#28a745,#20c997);color:#fff;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(40,167,69,0.4);}
-.login-btn:hover{transform:translateY(-2px);}
-.admin-badge{background:#ffc107;color:#000;padding:4px 8px;border-radius:20px;font-size:12px;font-weight:bold;}
-h1,h2{text-align:center;font-weight:800;}
-h1{font-size:28px;margin-bottom:10px;}
-h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
-.form-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;margin-bottom:12px;}
-label{display:block;font-size:14px;font-weight:600;margin-bottom:4px;}
-input,select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.9);font-size:16px;}
-.btn{padding:10px 20px;border:none;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.3);transition:.3s;font-size:14px;}
-.btn-primary{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;}
-.btn-login{background:linear-gradient(135deg,#ffc107,#ff8f00);color:#000;}
-.btn-cancelar{background:#dc3545;color:#fff;}
-.btn:hover{transform:translateY(-2px);}
-.ofertas{max-height:60vh;overflow-y:auto;}
-.oferta{background:rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-bottom:15px;box-shadow:0 10px 25px rgba(0,0,0,0.2);border-left:5px solid #ff6b6b;}
-.oferta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.oferta-header h3{margin:0;font-size:20px;}
-.status{padding:6px 12px;border-radius:20px;font-size:14px;font-weight:700;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif;}
+body{
+  background:linear-gradient(120deg,#004aad 0%,#0d99ff 100%);
+  color:#fff;
+  min-height:100vh;
+  padding:20px;
+}
+.container{
+  max-width:700px;margin:0 auto;background:rgba(255,255,255,0.1);
+  border-radius:20px;padding:25px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+  backdrop-filter:blur(15px);
+}
+h1{text-align:center;margin-bottom:10px;}
+h2{margin:20px 0 10px;text-align:center;}
+.ofertas{max-height:65vh;overflow-y:auto;}
+.oferta{background:rgba(255,255,255,0.1);border-radius:16px;padding:15px;margin-bottom:15px;}
+.oferta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.status{padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;}
 .status-disponivel{background:rgba(255,193,7,0.3);color:#ffc107;}
 .status-confirmado{background:rgba(40,167,69,0.3);color:#28a745;}
-.oferta-detalhes{font-size:14px;opacity:0.9;}
-.public-notice{background:rgba(0,0,0,0.3);padding:15px;border-radius:12px;margin-bottom:20px;text-align:center;}
-.btn-group{display:flex;gap:8px;flex-wrap:wrap;}
-@media(max-width:500px){.form-row{grid-template-columns:1fr;}.oferta-header{flex-direction:column;gap:8px;text-align:center;}.btn-group{flex-direction:column;width:100%;}}
+.btn{border:none;border-radius:999px;padding:10px 18px;font-weight:bold;cursor:pointer;transition:.2s;}
+.btn:hover{transform:translateY(-2px);}
+.btn-primary{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;}
+.btn-cancelar{background:#dc3545;color:#fff;}
+select,input{padding:10px;border:none;border-radius:12px;width:100%;margin:4px 0;}
+/* Botão flutuante unificado */
+#btnNovaOferta{
+  position:fixed;bottom:25px;right:25px;
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,#00c6ff,#0072ff);
+  color:#fff;font-size:32px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  cursor:pointer;z-index:1000;
+}
+#btnNovaOferta:hover{transform:scale(1.05);}
+.login-modal,.form-modal,.admin-modal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.85);
+  display:none;justify-content:center;align-items:center;z-index:9999;
+}
+.modal-content{
+  background:rgba(255,255,255,0.1);
+  padding:25px;border-radius:20px;
+  width:90%;max-width:380px;text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+.modal-content input, .modal-content select{
+  background:rgba(255,255,255,0.9);
+  margin-bottom:12px;
+}
+.modal-content button{margin-top:8px;width:100%;}
+.admin-panel{max-height:70vh;overflow-y:auto;text-align:left;}
+@media(max-width:500px){
+  .oferta-header{flex-direction:column;align-items:flex-start;}
+}
 </style>
 </head>
 <body>
-<div id="appMain" class="container">
+<div class="container">
   <h1>🏐 Liga 4x4 - Agendamentos</h1>
-  
-  <div class="public-notice">
-    <strong>👀 Público:</strong> Veja + aceite ofertas | <strong>🔐 Privado:</strong> 
-    <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:14px;padding:8px 16px;margin:2px;">🔑 AGENDAR</button>
-  </div>
-
-  <h2>⏰ Todas as ofertas</h2>
-  <div id="listaOfertas" class="ofertas">
-    <div style="text-align:center;padding:30px;opacity:0.7;">🔄 Carregando ofertas...</div>
-  </div>
-
-  <div id="formAgendar" style="display:none;">
-    <div id="adminBadge" class="admin-badge" style="display:none;">👑 MODO ADMIN</div>
-    <h2 style="margin-top:10px;">📢 Ofereça um horário</h2>
-    <form onsubmit="criarOferta(event)">
-      <div class="form-row">
-        <div>
-          <label>Seu time <span style="color:#ff6b6b;">*</span></label>
-          <select id="meuTime" required>
-            <option value="">Carregando times...</option>
-          </select>
-        </div>
-        <div>
-          <label>Quadra <span style="color:#ff6b6b;">*</span></label>
-          <select id="quadra" required>
-            <option value="">Escolha quadra</option>
-            <option value="Arena Belém">Arena Belém</option>
-            <option value="Arena Meteoro">Arena Meteoro</option>
-            <option value="Mega Sports">Mega Sports</option>
-            <option value="Praia Belém">Praia Belém</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div><label>Data <span style="color:#ff6b6b;">*</span></label><input id="data" type="date" required></div>
-        <div><label>Hora <span style="color:#ff6b6b;">*</span></label><input id="hora" type="time" required></div>
-        <button type="submit" class="btn btn-primary">🚀 OFERECER</button>
-      </div>
-    </form>
+  <p style="text-align:center;opacity:0.9;">Veja e aceite ofertas de jogos — publique horários disponíveis!</p>
+  <div class="ofertas" id="listaOfertas">
+    <div style="text-align:center;padding:25px;opacity:0.7;">🔄 Carregando ofertas...</div>
   </div>
 </div>
 
-<!-- LOGIN POPUP -->
-<div id="loginScreen" class="login-form" style="display:none;">
-  <h1 style="margin-bottom:20px;">🔐 Autenticação Liga 4x4</h1>
-  <p style="margin-bottom:20px;font-size:18px;">Senha do time OU <strong>liga4x4</strong> (admin)</p>
-  <input type="password" id="senhaInput" placeholder="ex: liga4x4 ou watchatchara" maxlength="20">
-  <button class="login-btn" onclick="entrar()">✅ ENTRAR</button>
-  <br><button class="btn btn-login" onclick="fecharLogin()" style="margin-top:15px;width:auto;">❌ Cancelar</button>
+<!-- Botão flutuante -->
+<div id="btnNovaOferta">+</div>
+
+<!-- Modal Login -->
+<div class="login-modal" id="loginModal">
+  <div class="modal-content">
+    <h2>🔐 Entrar</h2>
+    <p>Digite a senha do time ou <strong>liga4x4</strong> (admin)</p>
+    <input type="password" id="senhaInput" placeholder="ex: voleitche" maxlength="30">
+    <button class="btn btn-primary" onclick="entrar()">Entrar</button>
+    <button class="btn btn-cancelar" onclick="fecharLogin()">Cancelar</button>
+  </div>
 </div>
 
+<!-- Modal Nova Oferta -->
+<div class="form-modal" id="ofertaModal">
+  <div class="modal-content">
+    <h2>📅 Nova Oferta</h2>
+    <select id="meuTime" required></select>
+    <select id="quadra" required>
+      <option value="">Escolha quadra</option>
+      <option value="Arena Belém">Arena Belém</option>
+      <option value="Arena Meteoro">Arena Meteoro</option>
+      <option value="Mega Sports">Mega Sports</option>
+      <option value="Praia Belém">Praia Belém</option>
+    </select>
+    <input id="data" type="date" required>
+    <input id="hora" type="time" required>
+    <button class="btn btn-primary" onclick="criarOferta()">🚀 Publicar</button>
+    <button class="btn btn-cancelar" onclick="fecharOferta()">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal Admin -->
+<div class="admin-modal" id="adminModal">
+  <div class="modal-content admin-panel">
+    <h2>👑 Painel Admin</h2>
+    <div id="adminLista"></div>
+    <button class="btn btn-cancelar" onclick="fecharAdmin()">Fechar</button>
+  </div>
+</div>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
@@ -103,214 +129,143 @@ firebase.initializeApp({
 const db = firebase.firestore();
 const REF = db.collection("ofertasHorario");
 
-const SENHAS_TIMES = {
-  "watchatchara": "Watchatchara",
-  "time1": "Time 1",
-  "time2": "Time 2",
-  "time3": "Time 3",
-  "time4": "Time 4",
-  "time5": "Time 5",
-  "time6": "Time 6",
-  "time7": "Time 7",
-  "time8": "Time 8",
-  "time9": "Time 9",
-  "time10": "Time 10",
-  "time11": "Time 11",
-  "time12": "Time 12"
+const SENHAS = {
+  "liga4x4":"ADMIN_COMPLETO",
+  "watchatchara":"Watchatchara",
+  "iron":"Iron",
+  "matrix":"Matrix",
+  "filhosdafenix":"Filhos da Fênix",
+  "summer":"Summer",
+  "hungers":"Hungers",
+  "voleitche":"Vôlei Tche",
+  "conflitus":"Conflitus",
+  "baroesdalargadinha":"Barões da Largadinha",
+  "falcoes":"Falcões",
+  "time11":"Time 11",
+  "time12":"Time 12"
 };
 
-let usuarioAtual = null;
+let usuarioAtual=null;
 
-function mostrarLogin(){
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('senhaInput').focus();
-}
+document.getElementById('btnNovaOferta').onclick=()=>{mostrarLogin();};
 
-function fecharLogin(){
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('senhaInput').value = '';
-}
+function mostrarLogin(){document.getElementById('loginModal').style.display='flex';document.getElementById('senhaInput').focus();}
+function fecharLogin(){document.getElementById('loginModal').style.display='none';document.getElementById('senhaInput').value='';}
+function fecharOferta(){document.getElementById('ofertaModal').style.display='none';}
+function fecharAdmin(){document.getElementById('adminModal').style.display='none';}
 
 function entrar(){
-  const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
-  
-  if(senha === "liga4x426"){
-    usuarioAtual = {senha: "liga4x426", timesPermitidos: Object.values(SENHAS_TIMES).filter(t => typeof t === "string"), isAdmin: true};
-  } else if(SENHAS_TIMES[senha]){
-    usuarioAtual = {senha: senha, timesPermitidos: [SENHAS_TIMES[senha]], isAdmin: false};
-  } else {
-    alert("❌ Senha inválida!\n• liga4x4 = ADMIN\n• watchatchara\n• time1, time2...");
+  const senha=document.getElementById('senhaInput').value.trim().toLowerCase();
+  if(!senha)return;
+  if(senha==='liga4x4'){
+    usuarioAtual={isAdmin:true,nome:'Admin'};
+    fecharLogin();
+    abrirAdmin();
     return;
   }
-  
-  if(usuarioAtual.isAdmin){
-    document.getElementById('adminBadge').style.display = 'inline-block';
+  if(SENHAS[senha]){
+    usuarioAtual={isAdmin:false,nome:SENHAS[senha]};
+    const sel=document.getElementById('meuTime');
+    sel.innerHTML=`<option value="${usuarioAtual.nome}">${usuarioAtual.nome}</option>`;
+    fecharLogin();
+    document.getElementById('ofertaModal').style.display='flex';
+  }else{
+    alert('❌ Senha inválida!');
   }
-  
-  const select = document.getElementById('meuTime');
-  select.innerHTML = '<option value="">Escolha seu time</option>';
-  usuarioAtual.timesPermitidos.forEach(time => {
-    select.innerHTML += `<option value="${time}">${time}</option>`;
-  });
-  
-  fecharLogin();
-  document.getElementById('formAgendar').style.display = 'block';
-  alert(`✅ ${usuarioAtual.isAdmin ? 'ADMIN' : usuarioAtual.timesPermitidos[0]} logado!`);
 }
 
 async function carregarOfertas(){
-  const lista = document.getElementById('listaOfertas');
-  lista.innerHTML = '<div style="text-align:center;padding:20px;">🔄 Carregando...</div>';
-  
-  try {
-    const snap = await REF.orderBy("dataCriacao", "desc").get();
-    if(snap.empty){
-      lista.innerHTML = '<div style="text-align:center;padding:30px;opacity:0.7;">📭 Nenhuma oferta. <button class="btn btn-login" onclick="mostrarLogin()" style="font-size:12px;padding:6px 12px;">1ª oferta!</button></div>';
-      return;
+  const lista=document.getElementById('listaOfertas');
+  lista.innerHTML='<div style="text-align:center;padding:20px;">🔄 Carregando...</div>';
+  const snap=await REF.orderBy('dataCriacao','desc').get();
+  let html='';
+  if(snap.empty){
+    lista.innerHTML='<div style="text-align:center;opacity:0.7;padding:20px;">📭 Nenhuma oferta no momento.</div>';
+    return;
+  }
+  const agora=new Date();
+  for(const doc of snap.docs){
+    const o=doc.data();
+    // limpeza automática após 3 dias de jogos confirmados
+    if(o.status==='confirmado' && new Date(o.data)<agora.setDate(agora.getDate()-3)){
+      await REF.doc(doc.id).delete();
+      continue;
     }
-    
-    let html = `<div style="text-align:center;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:15px;">Total: <strong>${snap.size}</strong> oferta${snap.size>1?'s':''}</div>`;
-    
-    snap.forEach(doc => {
-      const o = doc.data();
-      const dataFmt = new Date(o.data).toLocaleDateString('pt-BR');
-      const statusClass = o.status === 'confirmado' ? 'status-confirmado' : 'status-disponivel';
-      const statusText = o.status === 'confirmado' ? '✅ Confirmado' : '⏳ Disponível';
-      
-      let botoes = '';
-
-// ✅ 1. ACEITAR (só ofertas disponíveis - público vê sempre)
-if(!o.aceitoPor){
-  botoes = `
-    <div class="btn-group">
-      <select id="aceitarTime_${doc.id}" style="flex:1;min-width:120px;">
-        <option value="">Escolha time</option>
-        <option value="Watchatchara">Watchatchara</option>
-        <option value="Time 1">Time 1</option>
-        <option value="Time 2">Time 2</option>
-        <option value="Time 3">Time 3</option>
-        <option value="Time 4">Time 4</option>
-        <option value="Time 5">Time 5</option>
-        <option value="Time 6">Time 6</option>
-        <option value="Time 7">Time 7</option>
-        <option value="Time 8">Time 8</option>
-        <option value="Time 9">Time 9</option>
-        <option value="Time 10">Time 10</option>
-        <option value="Time 11">Time 11</option>
-        <option value="Time 12">Time 12</option>
-      </select>
-      <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITO</button>
+    const dataFmt=new Date(o.data).toLocaleDateString('pt-BR');
+    const statusClass=o.status==='confirmado'?'status-confirmado':'status-disponivel';
+    const statusText=o.status==='confirmado'?'✅ Confirmado':'⏳ Disponível';
+    html+=`
+    <div class="oferta">
+      <div class="oferta-header">
+        <h3>${o.quadra} - ${o.hora}</h3>
+        <span class="status ${statusClass}">${statusText}</span>
+      </div>
+      <div>📅 ${dataFmt}<br>🏐 ${o.timeOfertante} ${o.aceitoPor?`x <strong>${o.aceitoPor}</strong>`:'(aguardando)'}</div>
+      ${!o.aceitoPor?`<div style="margin-top:10px;">
+        <select id="aceitarTime_${doc.id}">
+          <option value="">Escolha time</option>
+          ${Object.values(SENHAS).filter(v=>v!=='ADMIN_COMPLETO').map(t=>`<option>${t}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary" onclick="aceitarOferta('${doc.id}','${o.timeOfertante}')">✅ Aceitar</button>
+      </div>`:''}
     </div>`;
+  }
+  lista.innerHTML=html;
 }
 
-// ✅ 2. CANCELAR (dono da oferta - só ofertas disponíveis)
-if(usuarioAtual && !o.aceitoPor && (usuarioAtual.isAdmin || usuarioAtual.timesPermitidos.includes(o.timeOfertante))){
-  botoes += `<button class="btn btn-cancelar" onclick="cancelarOferta('${doc.id}')" style="width:100%;margin-top:8px;">❌ CANCELAR</button>`;
+async function criarOferta(){
+  const time=document.getElementById('meuTime').value;
+  const quadra=document.getElementById('quadra').value;
+  const data=document.getElementById('data').value;
+  const hora=document.getElementById('hora').value;
+  if(!time||!quadra||!data||!hora){alert('❌ Preencha tudo!');return;}
+  await REF.add({
+    timeOfertante:time,quadra,data,hora,
+    status:'disponivel',aceitoPor:null,
+    dataCriacao:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  alert('✅ Oferta criada!');
+  fecharOferta();
+  carregarOfertas();
 }
 
-// ✅ 3. EXCLUIR ADMIN (SEM PRE - TODAS ofertas, confirmadas ou não)
-if(usuarioAtual && usuarioAtual.isAdmin){
-  botoes += `<button class="btn btn-cancelar" onclick="excluirJogo('${doc.id}')" style="width:100%;margin-top:8px;font-weight:bold;">🗑️ EXCLUIR (ADMIN)</button>`;
-}
-
-      
-      html += `
-        <div class="oferta">
-          <div class="oferta-header">
-            <h3>${o.quadra} – ${o.hora}</h3>
-            <span class="status ${statusClass}">${statusText}</span>
-          </div>
-          <div class="oferta-detalhes">
-            📅 ${dataFmt}<br>
-            🏐 ${o.timeOfertante} ${o.aceitoPor ? `x <strong>${o.aceitoPor}</strong>` : '(aguardando)'}
-          </div>
-          ${botoes ? `<div style="margin-top:15px;">${botoes}</div>` : ''}
-        </div>`;
+async function aceitarOferta(id,timeOfertante){
+  const sel=document.getElementById(`aceitarTime_${id}`);
+  const time=sel.value;
+  if(!time||time===timeOfertante){alert('❌ Escolha um time válido!');return;}
+  if(confirm(`Confirmar jogo ${timeOfertante} x ${time}?`)){
+    await REF.doc(id).update({
+      status:'confirmado',
+      aceitoPor:time,
+      dataAceite:firebase.firestore.FieldValue.serverTimestamp()
     });
-    lista.innerHTML = html;
-  } catch(error) {
-    lista.innerHTML = '<div style="text-align:center;padding:30px;color:#ff6b6b;">❌ Erro conexão.</div>';
-  }
-}
-
-async function criarOferta(e){
-  e.preventDefault();
-  if(!usuarioAtual){
-    alert("❌ Login necessário!");
-    mostrarLogin();
-    return;
-  }
-  const timeOfertante = document.getElementById('meuTime').value;
-  if(!timeOfertante){ alert("❌ Escolha time!"); return; }
-  
-  const dados = {
-    timeOfertante,
-    quadra: document.getElementById('quadra').value,
-    data: document.getElementById('data').value,
-    hora: document.getElementById('hora').value,
-    status: "disponivel",
-    aceitoPor: null,
-    dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  
-  try {
-    await REF.add(dados);
-    alert("✅ Oferta criada!");
-    e.target.reset();
+    alert('🎉 Jogo confirmado!');
     carregarOfertas();
-  } catch(error) {
-    alert("❌ Erro salvar.");
   }
 }
 
-async function aceitarOferta(id, timeOfertante){
-  const meuTime = document.getElementById(`aceitarTime_${id}`).value;
-  if(!meuTime || meuTime === timeOfertante){
-    alert("❌ Time diferente!");
-    return;
-  }
-  if(confirm(`✅ ${timeOfertante} x ${meuTime}`)){
-    try {
-      await REF.doc(id).update({
-        status: "confirmado",
-        aceitoPor: meuTime,
-        dataAceite: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      alert("🎉 Confirmado!");
-      carregarOfertas();
-    } catch(error) {
-      alert("❌ Erro confirmar.");
-    }
+async function abrirAdmin(){
+  const snap=await REF.get();
+  let html='';
+  snap.forEach(doc=>{
+    const o=doc.data();
+    html+=`<div style="border-bottom:1px solid rgba(255,255,255,0.2);padding:8px 0;">
+      <strong>${o.timeOfertante}</strong> - ${o.quadra} ${o.data} ${o.hora} (${o.status})
+      <br><button class="btn btn-cancelar" style="margin-top:5px;" onclick="excluir('${doc.id}')">🗑️ Excluir</button>
+    </div>`;
+  });
+  document.getElementById('adminLista').innerHTML=html||'Nenhuma oferta.';
+  document.getElementById('adminModal').style.display='flex';
+}
+async function excluir(id){
+  if(confirm('Excluir este registro?')){
+    await REF.doc(id).delete();
+    alert('✅ Excluído!');
+    abrirAdmin();
+    carregarOfertas();
   }
 }
-
-async function cancelarOferta(id){
-  if(confirm("❌ Cancelar oferta?")){
-    try {
-      await REF.doc(id).delete();
-      alert("✅ Cancelada!");
-      carregarOfertas();
-    } catch(error) {
-      alert("❌ Erro.");
-    }
-  }
-}
-
-async function excluirJogo(id){
-  if(confirm("🗑️ EXCLUIR JOGO (ADMIN)?")){
-    try {
-      await REF.doc(id).delete();
-      alert("✅ Excluído pelo ADMIN!");
-      carregarOfertas();
-    } catch(error) {
-      alert("❌ Erro excluir.");
-    }
-  }
-}
-
 carregarOfertas();
 </script>
 </body>
-
 </html>
-
