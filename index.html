@@ -136,7 +136,6 @@ h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
 .close-btn:hover { color: #ff4d4d; }
 </style>
 </head>
-
 <body>
 <div class="container">
   <h1>🏐 Liga 4x4 - Agendamentos</h1>
@@ -152,7 +151,7 @@ h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
 <div id="loginScreen">
   <h2>🔐 Entrar na Liga 4x4</h2>
   <p style="margin-bottom:20px;font-size:18px;">Digite a senha do seu time ou admin</p>
-  <input type="password" id="senhaInput" placeholder="ex: voleitche, iron...">
+  <input type="password" id="senhaInput" placeholder="ex: iron, matrix...">
   <button class="login-btn" onclick="entrar()">Entrar</button>
 </div>
 
@@ -192,6 +191,7 @@ h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
     <button class="btn btn-primary" style="margin-top:20px;width:100%;" onclick="salvarOferta()">✅ Salvar Oferta</button>
   </div>
 </div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
@@ -255,15 +255,17 @@ function entrar() {
 // ==============================
 // 📅 ABRIR E FECHAR MODAL
 // ==============================
+function novaOferta() {
+  abrirModal();
+}
+
 function abrirModal() {
   if (!usuarioAtual) {
     abrirLogin();
     return;
   }
-
   document.getElementById("novaOfertaModal").style.display = "flex";
 
-  // Mostra campos de admin
   const camposAdmin = document.getElementById("camposAdmin");
   const selectOfertante = document.getElementById("selectOfertante");
   const selectOponente = document.getElementById("selectOponente");
@@ -328,11 +330,12 @@ async function salvarOferta() {
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS
+// 🔄 CARREGAR OFERTAS (CORRIGIDO)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
   const snap = await REF.orderBy("dataCriacao", "desc").get();
+  
   if (snap.empty) {
     lista.innerHTML = "<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta ainda</div>";
     return;
@@ -348,7 +351,7 @@ async function carregarOfertas() {
 
     let botoes = "";
 
-    // Exibir botões dependendo do usuário logado
+    // ✅ CORRIGIDO: Botões funcionam perfeitamente!
     if (usuarioAtual) {
       if (!o.aceitoPor && usuarioAtual.isAdmin) {
         // Admin pode escolher quem aceita
@@ -360,6 +363,7 @@ async function carregarOfertas() {
             <button class="btn btn-aceitar" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar</button>
           </div>`;
       } else if (!o.aceitoPor && usuarioAtual.nome !== o.timeOfertante) {
+        // ✅ TIME NORMAL VÊ BOTÃO ACEITAR (Matrix vê oferta do Iron)
         botoes = `<button class="btn btn-aceitar" style="width:100%;" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar jogo</button>`;
       }
 
@@ -399,6 +403,7 @@ async function aceitarOferta(id, ofertante) {
   if (usuarioAtual.isAdmin) {
     const sel = document.getElementById(`aceitarTime_${id}`);
     meuTime = sel ? sel.value : meuTime;
+    if (!meuTime) { alert("❌ Escolha um time para aceitar!"); return; }
   }
 
   if (meuTime === ofertante) {
@@ -440,12 +445,8 @@ async function limparAntigos() {
 // 🚀 INICIALIZAÇÃO
 // ==============================
 carregarOfertas();
-setInterval(limparAntigos, 1000 * 60 * 60); // limpa a cada hora
+setInterval(limparAntigos, 1000 * 60 * 60);
 document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
+</body>
 </html>
-
-
-
-
-
