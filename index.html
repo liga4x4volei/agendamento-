@@ -4,15 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🏐 Liga 4x4 - Agendamentos</title>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial;}
 body{
   background:linear-gradient(90deg,#004aad 0%,#0d99ff 100%);
   min-height:100vh;padding:20px;color:#fff;
 }
-
-/* Container principal */
 .container{
   max-width:650px;margin:0 auto;
   background:rgba(255,255,255,0.1);
@@ -20,87 +17,102 @@ body{
   box-shadow:0 20px 40px rgba(0,0,0,0.3);
   backdrop-filter:blur(15px);
 }
-
-/* Títulos */
 h1,h2{text-align:center;font-weight:800;}
 h1{font-size:28px;margin-bottom:10px;}
 h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
-
-/* Ofertas */
+.public-notice{
+  background:rgba(0,0,0,0.3);
+  padding:15px;border-radius:12px;
+  margin-bottom:20px;text-align:center;
+}
 .ofertas{max-height:60vh;overflow-y:auto;}
 .oferta{
   background:rgba(255,255,255,0.1);
-  border-radius:16px;padding:20px;margin-bottom:15px;
+  border-radius:16px;padding:20px;
+  margin-bottom:15px;
   box-shadow:0 10px 25px rgba(0,0,0,0.2);
   border-left:5px solid #ff6b6b;
 }
-.oferta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.oferta-header h3{margin:0;font-size:20px;}
-.status{padding:6px 12px;border-radius:20px;font-size:14px;font-weight:700;}
+.oferta-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+}
+.status{
+  padding:6px 12px;border-radius:20px;font-size:14px;font-weight:700;
+}
 .status-disponivel{background:rgba(255,193,7,0.3);color:#ffc107;}
 .status-confirmado{background:rgba(40,167,69,0.3);color:#28a745;}
 .oferta-detalhes{font-size:14px;opacity:0.9;}
-.btn-group{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-
-/* Botões */
 .btn{
-  padding:10px 20px;border:none;border-radius:999px;
-  font-weight:700;cursor:pointer;
-  box-shadow:0 6px 16px rgba(0,0,0,0.3);
+  padding:10px 20px;border:none;border-radius:999px;font-weight:700;
+  cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.3);
   transition:.3s;font-size:14px;
 }
-.btn:hover{transform:translateY(-2px);}
-.btn-primary{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;}
-.btn-aceitar{background:linear-gradient(135deg,#ffc107,#ff8f00);color:#000;font-size:16px;padding:12px 25px;}
-.btn-cancelar{background:#dc3545;color:#fff;}
-
-/* Botão flutuante (+) */
-#btnFlutuante{
-  position:fixed;bottom:25px;right:25px;
+.btn-primary{
   background:linear-gradient(135deg,#28a745,#20c997);
-  color:#fff;border:none;border-radius:50%;
-  width:70px;height:70px;font-size:42px;
-  cursor:pointer;box-shadow:0 10px 25px rgba(0,0,0,0.4);
-  transition:.3s;z-index:9999;
+  color:#fff;
 }
-#btnFlutuante:hover{transform:scale(1.1);}
-
-/* Login modal */
-#loginScreen{
+.btn-aceitar{
+  background:linear-gradient(135deg,#ffc107,#ff9800);
+  color:#000;font-weight:800;
+}
+.btn-cancelar{background:#dc3545;color:#fff;}
+.btn:hover{transform:translateY(-2px);}
+.btn-login{
+  background:linear-gradient(135deg,#ffc107,#ff8f00);
+  color:#000;
+}
+.login-form{
   display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.9);z-index:10000;
-  justify-content:center;align-items:center;flex-direction:column;color:#fff;
+  background:rgba(0,0,0,0.9);z-index:9999;
+  justify-content:center;align-items:center;flex-direction:column;
 }
-#loginScreen input{
+.login-form input{
   width:300px;max-width:90vw;padding:15px;border-radius:12px;
-  border:none;font-size:18px;margin-bottom:15px;background:rgba(255,255,255,0.9);
+  border:none;font-size:18px;margin-bottom:15px;
+  background:rgba(255,255,255,0.9);
 }
 .login-btn{
-  width:300px;max-width:90vw;padding:15px 20px;border:none;border-radius:12px;
-  background:linear-gradient(135deg,#28a745,#20c997);
+  width:300px;max-width:90vw;padding:15px 20px;border:none;
+  border-radius:12px;background:linear-gradient(135deg,#28a745,#20c997);
   color:#fff;font-size:18px;font-weight:700;cursor:pointer;
   box-shadow:0 8px 20px rgba(40,167,69,0.4);
 }
+.login-btn:hover{transform:translateY(-2px);}
+#btnFlutuante{
+  position:fixed;bottom:25px;right:25px;width:70px;height:70px;
+  border:none;border-radius:50%;
+  background:linear-gradient(135deg,#28a745,#20c997);
+  color:white;font-size:40px;font-weight:bold;
+  cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.4);
+  z-index:9999;transition:transform 0.3s ease;
+}
+#btnFlutuante:hover{transform:scale(1.1);}
+@media(max-width:500px){
+  .oferta-header{flex-direction:column;gap:8px;text-align:center;}
+  .btn-group{flex-direction:column;width:100%;}
+}
 </style>
 </head>
-
 <body>
 <div class="container">
   <h1>🏐 Liga 4x4 - Agendamentos</h1>
-  <div id="listaOfertas" class="ofertas">
-    <div style="text-align:center;padding:30px;opacity:0.7;">🔄 Carregando ofertas...</div>
+  <div class="public-notice">
+    <strong>👀 Público:</strong> Veja ofertas e confirmados<br>
+    <strong>🔐 Login:</strong> Para criar ou aceitar jogos
   </div>
+  <h2>⏰ Todas as ofertas</h2>
+  <div id="listaOfertas" class="ofertas">Carregando...</div>
 </div>
 
 <!-- Botão flutuante -->
-<button id="btnFlutuante" onclick="abrirLogin()">+</button>
+<button id="btnFlutuante" title="Nova Oferta">＋</button>
 
-<!-- Login -->
-<div id="loginScreen">
-  <h2>🔐 Entrar na Liga 4x4</h2>
-  <p style="margin-bottom:20px;font-size:18px;">Digite a senha do seu time ou <b>liga4x4</b> (admin)</p>
-  <input type="password" id="senhaInput" placeholder="ex: voleitche, liga4x4...">
+<!-- Tela de Login -->
+<div id="loginScreen" class="login-form">
+  <h1 style="margin-bottom:20px;">🔐 Entrar</h1>
+  <input type="password" id="senhaInput" placeholder="Senha do time ou admin">
   <button class="login-btn" onclick="entrar()">Entrar</button>
+  <button class="btn btn-login" onclick="fecharLogin()" style="margin-top:15px;width:auto;">Cancelar</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -111,258 +123,99 @@ firebase.initializeApp({
   authDomain: "liga4x4volei-71358.firebaseapp.com",
   projectId: "liga4x4volei-71358"
 });
-const db = firebase.firestore();
-const REF = db.collection("ofertasHorario");
+const db=firebase.firestore();
+const REF=db.collection("ofertasHorario");
 
-// 🏐 Times e senhas
-const SENHAS_TIMES = {
-  "liga4x4": "ADMIN",
-  "watchatchara": "Watchatchara",
-  "iron": "Iron",
-  "matrix": "Matrix",
-  "filhosdafenix": "Filhos da Fênix",
-  "summer": "Summer",
-  "hungers": "Hungers",
-  "voleitche": "Vôlei Tche",
-  "conflitus": "Conflitus",
-  "baroesdalargadinha": "Barões da Largadinha",
-  "falcoes": "Falcões",
-  "time11": "Time 11",
-  "time12": "Time 12"
+const SENHAS_TIMES={
+  "liga4x4":"ADMIN",
+  "watchatchara":"Watchatchara",
+  "iron":"Iron",
+  "matrix":"Matrix",
+  "filhosdafenix":"Filhos da Fênix",
+  "summer":"Summer",
+  "hungers":"Hungers",
+  "voleitche":"Vôlei Tche",
+  "conflitus":"Conflitus",
+  "baroesdalargadinha":"Barões da Largadinha",
+  "falcoes":"Falcões",
+  "time11":"Time 11",
+  "time12":"Time 12"
 };
+let usuarioAtual=null;
 
-let usuarioAtual = null;
+function mostrarLogin(){document.getElementById('loginScreen').style.display='flex';}
+function fecharLogin(){document.getElementById('loginScreen').style.display='none';document.getElementById('senhaInput').value='';}
 
-// 🔐 Abrir login
-function abrirLogin(){
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('senhaInput').focus();
-}
-
-// ✅ Entrar
 function entrar(){
-  const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
-  if(!SENHAS_TIMES[senha]){
-    alert("❌ Senha inválida!");
-    return;
-  }
-  usuarioAtual = {
-    senha,
-    nome: SENHAS_TIMES[senha],
-    isAdmin: senha === "liga4x4"
-  };
-  document.getElementById('loginScreen').style.display='none';
-  alert(`✅ Logado como ${usuarioAtual.isAdmin?"ADMIN":usuarioAtual.nome}`);
+  const senha=document.getElementById('senhaInput').value.toLowerCase().trim();
+  if(senha==="liga4x4") usuarioAtual={nome:"ADMIN",isAdmin:true};
+  else if(SENHAS_TIMES[senha]) usuarioAtual={nome:SENHAS_TIMES[senha],isAdmin:false};
+  else{alert("Senha inválida!");return;}
+  fecharLogin();carregarOfertas();alert(`✅ Logado como ${usuarioAtual.nome}`);
 }
 
-// 🔄 Carregar ofertas (Parte 2 vai expandir isso)
-async function carregarOfertas(){
-  const lista=document.getElementById('listaOfertas');
-  const snap=await REF.orderBy("dataCriacao","desc").get();
-  let html="";
-  snap.forEach(doc=>{
-    const o=doc.data();
-    const dataFmt=new Date(o.data).toLocaleDateString('pt-BR');
-    const status=o.status==="confirmado"?"status-confirmado":"status-disponivel";
-    const txt=o.status==="confirmado"?"✅ Confirmado":"⏳ Disponível";
-    html+=`
-      <div class="oferta">
-        <div class="oferta-header">
-          <h3>${o.quadra} – ${o.hora}</h3>
-          <span class="status ${status}">${txt}</span>
-        </div>
-        <div class="oferta-detalhes">
-          📅 ${dataFmt}<br>🏐 ${o.timeOfertante}${o.aceitoPor?` x <b>${o.aceitoPor}</b>`:" (aguardando...)"}
-        </div>
-      </div>`;
-  });
-  lista.innerHTML=html||"<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta ainda</div>";
-}
-carregarOfertas();
-</script>
-</body>
-</html>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyCovHcUFKP9dtwRxfnajhvGUgluCFp0HVQ",
-  authDomain: "liga4x4volei-71358.firebaseapp.com",
-  projectId: "liga4x4volei-71358"
+document.getElementById('btnFlutuante').addEventListener('click',()=>{
+  if(!usuarioAtual) mostrarLogin();
+  else criarOfertaPrompt();
 });
-const db = firebase.firestore();
-const REF = db.collection("ofertasHorario");
 
-const SENHAS_TIMES = {
-  "liga4x4": "ADMIN",
-  "watchatchara": "Watchatchara",
-  "iron": "Iron",
-  "matrix": "Matrix",
-  "filhosdafenix": "Filhos da Fênix",
-  "summer": "Summer",
-  "hungers": "Hungers",
-  "voleitche": "Vôlei Tche",
-  "conflitus": "Conflitus",
-  "baroesdalargadinha": "Barões da Largadinha",
-  "falcoes": "Falcões",
-  "time11": "Time 11",
-  "time12": "Time 12"
-};
-
-let usuarioAtual = null;
-
-/* 🔐 LOGIN */
-function abrirLogin(){
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('senhaInput').focus();
-}
-function entrar(){
-  const senha = document.getElementById('senhaInput').value.toLowerCase().trim();
-  if(!SENHAS_TIMES[senha]){
-    alert("❌ Senha inválida!");
-    return;
-  }
-  usuarioAtual = {
-    senha,
-    nome: SENHAS_TIMES[senha],
-    isAdmin: senha === "liga4x4"
-  };
-  document.getElementById('loginScreen').style.display='none';
-  alert(`✅ Logado como ${usuarioAtual.isAdmin?"ADMIN":usuarioAtual.nome}`);
-}
-
-/* 🔄 CARREGAR OFERTAS */
 async function carregarOfertas(){
   const lista=document.getElementById('listaOfertas');
   const snap=await REF.orderBy("dataCriacao","desc").get();
-  if(snap.empty){
-    lista.innerHTML="<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta</div>";
-    return;
-  }
-  let html="";
+  if(snap.empty){lista.innerHTML='<div style="text-align:center;padding:20px;">📭 Nenhuma oferta</div>';return;}
+  let html='';
   snap.forEach(doc=>{
     const o=doc.data();
     const dataFmt=new Date(o.data).toLocaleDateString('pt-BR');
-    const status=o.status==="confirmado"?"status-confirmado":"status-disponivel";
-    const txt=o.status==="confirmado"?"✅ Confirmado":"⏳ Disponível";
-
-    // Só admin ou o time dono pode cancelar
-    let botoes="";
-
-    if(!o.aceitoPor && usuarioAtual){
-      // Só logado pode aceitar
-      if(usuarioAtual.isAdmin){
-        // admin escolhe time que aceita
-        botoes=`
-          <div class="btn-group">
-            <select id="aceitarTime_${doc.id}">
-              ${Object.values(SENHAS_TIMES).filter(t=>t!=="ADMIN").map(t=>`<option>${t}</option>`).join('')}
-            </select>
-            <button class="btn btn-aceitar" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITAR</button>
-          </div>`;
-      } else if(usuarioAtual.nome!==o.timeOfertante){
-        // time comum só pode aceitar se for outro time
-        botoes=`<button class="btn btn-aceitar" style="width:100%;" onclick="aceitarOferta('${doc.id}', '${o.timeOfertante}')">✅ ACEITAR JOGO</button>`;
-      }
-    }
-
-    if(usuarioAtual && (usuarioAtual.isAdmin || usuarioAtual.nome===o.timeOfertante)){
-      botoes+=`<button class="btn btn-cancelar" style="width:100%;margin-top:8px;" onclick="cancelarOferta('${doc.id}')">❌ CANCELAR</button>`;
-    }
-
+    const statusClass=o.status==='confirmado'?'status-confirmado':'status-disponivel';
+    const statusTxt=o.status==='confirmado'?'✅ Confirmado':'⏳ Disponível';
     html+=`
-      <div class="oferta">
-        <div class="oferta-header">
-          <h3>${o.quadra} – ${o.hora}</h3>
-          <span class="status ${status}">${txt}</span>
-        </div>
-        <div class="oferta-detalhes">
-          📅 ${dataFmt}<br>
-          🏐 ${o.timeOfertante}${o.aceitoPor?` x <b>${o.aceitoPor}</b>`:" (aguardando...)"}
-        </div>
-        ${botoes?`<div style="margin-top:15px;">${botoes}</div>`:""}
-      </div>`;
+    <div class="oferta">
+      <div class="oferta-header"><h3>${o.quadra} – ${o.hora}</h3><span class="status ${statusClass}">${statusTxt}</span></div>
+      <div class="oferta-detalhes">📅 ${dataFmt}<br>🏐 ${o.timeOfertante} ${o.aceitoPor?`x <strong>${o.aceitoPor}</strong>`:'(aguardando)'}</div>
+      ${usuarioAtual?renderBotoes(doc.id,o):''}
+    </div>`;
   });
   lista.innerHTML=html;
 }
 
-/* ➕ CRIAR NOVA OFERTA */
-async function novaOferta(){
-  if(!usuarioAtual){
-    abrirLogin();
-    return;
+function renderBotoes(id,o){
+  let bts='';
+  if(o.status==='disponivel' && !o.aceitoPor && usuarioAtual && !usuarioAtual.isAdmin && usuarioAtual.nome!==o.timeOfertante){
+    bts+=`<button class="btn btn-aceitar" onclick="aceitarOferta('${id}')">✅ Aceitar</button>`;
   }
-
-  let timeOfertante = usuarioAtual.nome;
-  if(usuarioAtual.isAdmin){
-    const t=prompt("Admin: escolha o time que faz a oferta:\n"+Object.values(SENHAS_TIMES).filter(t=>t!=="ADMIN").join(", "));
-    if(!t)return;
-    timeOfertante=t;
+  if(usuarioAtual && (usuarioAtual.isAdmin || usuarioAtual.nome===o.timeOfertante)){
+    bts+=`<button class="btn btn-cancelar" onclick="cancelarOferta('${id}')">❌ Cancelar</button>`;
   }
+  return `<div style="margin-top:10px;">${bts}</div>`;
+}
 
-  const quadra = prompt("🏐 Local do jogo (ex: Praia Belém):");
-  const data = prompt("📅 Data (aaaa-mm-dd):", new Date().toISOString().split("T")[0]);
-  const hora = prompt("⏰ Hora (hh:mm):","20:00");
-
-  if(!quadra || !data || !hora){alert("❌ Campos obrigatórios!");return;}
-
-  await REF.add({
-    timeOfertante,
-    quadra,
-    data,
-    hora,
-    status:"disponivel",
-    aceitoPor:null,
+async function criarOfertaPrompt(){
+  const quadra=prompt("Quadra (ex: Arena Belém):");
+  const data=prompt("Data (AAAA-MM-DD):");
+  const hora=prompt("Hora (HH:MM):");
+  if(!quadra||!data||!hora)return;
+  const dados={
+    timeOfertante:usuarioAtual.isAdmin?"ADMIN":usuarioAtual.nome,
+    quadra,data,hora,
+    status:"disponivel",aceitoPor:null,
     dataCriacao:firebase.firestore.FieldValue.serverTimestamp()
-  });
+  };
+  await REF.add(dados);
   alert("✅ Oferta criada!");
   carregarOfertas();
 }
 
-/* ✅ ACEITAR */
-async function aceitarOferta(id,timeOfertante){
-  if(!usuarioAtual){
-    alert("⚠️ Faça login para aceitar um jogo.");
-    abrirLogin();
-    return;
-  }
-  let meuTime=usuarioAtual.nome;
-  if(usuarioAtual.isAdmin){
-    const select=document.getElementById(`aceitarTime_${id}`);
-    meuTime=select?select.value:meuTime;
-  }
-  if(meuTime===timeOfertante){alert("❌ Não pode aceitar o próprio jogo!");return;}
-
-  await REF.doc(id).update({
-    status:"confirmado",
-    aceitoPor:meuTime,
-    dataAceite:firebase.firestore.FieldValue.serverTimestamp()
-  });
-  alert(`🎉 Jogo confirmado!\n${timeOfertante} x ${meuTime}`);
+async function aceitarOferta(id){
+  await REF.doc(id).update({status:"confirmado",aceitoPor:usuarioAtual.nome});
+  alert("🎉 Jogo confirmado!");
   carregarOfertas();
 }
-
-/* ❌ CANCELAR */
 async function cancelarOferta(id){
-  if(!confirm("Cancelar esta oferta?"))return;
-  await REF.doc(id).delete();
-  carregarOfertas();
+  if(confirm("Cancelar oferta?")){await REF.doc(id).delete();carregarOfertas();}
 }
 
-/* 🕓 LIMPAR ANTIGOS (confirmados >3 dias) */
-async function limparAntigos(){
-  const snap=await REF.where("status","==","confirmado").get();
-  const agora=Date.now();
-  for(const doc of snap.docs){
-    const d=doc.data();
-    if(d.dataAceite && (agora - d.dataAceite.toDate().getTime()) > 3*24*60*60*1000){
-      await REF.doc(doc.id).delete();
-    }
-  }
-}
-
-/* Inicializa */
 carregarOfertas();
-setInterval(limparAntigos, 1000*60*60); // limpa a cada hora
-document.getElementById("btnFlutuante").onclick = novaOferta;
 </script>
+</body>
+</html>
