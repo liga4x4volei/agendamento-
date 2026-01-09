@@ -375,8 +375,8 @@ async function carregarOfertas() {
           <span class="status ${status}">${txt}</span>
         </div>
         <div class="oferta-detalhes">
-          📅 ${dataFmt}<br>
-          🏐 <b>${o.timeOfertante}<b>${o.aceitoPor ? ` x <b>${o.aceitoPor}</b>` : " (aguardando...)"}
+          📅 <b>${dataFmt}</b><br>
+          🏐 <b>${o.timeOfertante}</b>${o.aceitoPor ? ` x <b>${o.aceitoPor}</b>` : " (aguardando...)"}
         </div>
         ${botoes ? `<div style="margin-top:15px;">${botoes}</div>` : ""}
       </div>`;
@@ -444,5 +444,6 @@ setInterval(limparAntigos, 1000 * 60 * 60); // limpa a cada hora
 document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </html>
+
 
 
