@@ -184,7 +184,7 @@ h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
     </select>
 
     <label for="dataInput">📅 Data:</label>
-    <input type="" id="dataInput">
+    <input type="date" id="dataInput">
 
     <label for="horaInput">⏰ Hora:</label>
     <input type="time" id="horaInput" value="20:00">
@@ -206,7 +206,6 @@ firebase.initializeApp({
 });
 const db = firebase.firestore();
 const REF = db.collection("ofertasHorario");
-
 // ==============================
 // 🏐 TIMES E SENHAS
 // ==============================
@@ -284,7 +283,7 @@ function fecharModal() {
 }
 
 // ==============================
-// 💾 SALVAR NOVA OFERTA
+// 💾 SALVAR NOVA OFERTA (CORRIGIDO!)
 // ==============================
 async function salvarOferta() {
   if (!usuarioAtual) {
@@ -304,19 +303,22 @@ async function salvarOferta() {
   }
 
   const quadra = document.getElementById("quadraSelect").value;
-  const data = document.getElementById("dataInput").value;
+  const dataInput = document.getElementById("dataInput").value;
   const hora = document.getElementById("horaInput").value;
 
-  if (!quadra || !data || !hora) {
+  if (!quadra || !dataInput || !hora) {
     alert("❌ Preencha todos os campos!");
     return;
   }
 
+  // ✅ CORREÇÃO: Salva data como ISO string LOCAL (+03:00 Brasil)
+  const dataLocal = new Date(dataInput + 'T' + hora + ':00-03:00').toISOString();
+  
   await REF.add({
     timeOfertante,
     aceitoPor: oponente,
     quadra,
-    data,
+    data: dataLocal,  // Agora salva correto!
     hora,
     status: oponente ? "confirmado" : "disponivel",
     dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
@@ -328,7 +330,7 @@ async function salvarOferta() {
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS (CORRIGIDO)
+// 🔄 CARREGAR OFERTAS (CORRIGIDO!)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
@@ -343,16 +345,21 @@ async function carregarOfertas() {
   snap.forEach(doc => {
     const o = doc.data();
     const id = doc.id;
-    const dataFmt = o.data ? new Date(o.data).toLocaleDateString('pt-BR') : "";
+    
+    // ✅ CORREÇÃO: Formata data salva como string ISO para pt-BR local
+    let dataFmt = '';
+    if (o.data) {
+      const dataObj = new Date(o.data);
+      dataFmt = dataObj.toLocaleDateString('pt-BR');
+    }
+    
     const status = o.status === "confirmado" ? "status-confirmado" : "status-disponivel";
     const txt = o.status === "confirmado" ? "✅ Confirmado" : "⏳ Disponível";
 
     let botoes = "";
 
-    // ✅ CORRIGIDO: Botões funcionam perfeitamente!
     if (usuarioAtual) {
       if (!o.aceitoPor && usuarioAtual.isAdmin) {
-        // Admin pode escolher quem aceita
         botoes = `
           <div class="btn-group">
             <select id="aceitarTime_${id}">
@@ -361,7 +368,6 @@ async function carregarOfertas() {
             <button class="btn btn-aceitar" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar</button>
           </div>`;
       } else if (!o.aceitoPor && usuarioAtual.nome !== o.timeOfertante) {
-        // ✅ TIME NORMAL VÊ BOTÃO ACEITAR (Matrix vê oferta do Iron)
         botoes = `<button class="btn btn-aceitar" style="width:100%;" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar jogo</button>`;
       }
 
@@ -448,7 +454,3 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
-
-
-
-
