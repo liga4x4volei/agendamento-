@@ -284,7 +284,7 @@ function fecharModal() {
 }
 
 // ==============================
-// 💾 SALVAR NOVA OFERTA (CORRIGIDO FUSO)
+// 💾 SALVAR NOVA OFERTA
 // ==============================
 async function salvarOferta() {
   if (!usuarioAtual) {
@@ -304,24 +304,19 @@ async function salvarOferta() {
   }
 
   const quadra = document.getElementById("quadraSelect").value;
-  const dataStr = document.getElementById("dataInput").value; // yyyy-mm-dd
+  const data = document.getElementById("dataInput").value;
   const hora = document.getElementById("horaInput").value;
 
-  if (!quadra || !dataStr || !hora) {
+  if (!quadra || !data || !hora) {
     alert("❌ Preencha todos os campos!");
     return;
   }
-
-  // 🔥 CONVERTE PARA DATA LOCAL (SEM FUSO UTC)
-  const [ano, mes, dia] = dataStr.split("-");
-  const dataLocal = new Date(ano, mes - 1, dia); // cria em horário LOCAL
 
   await REF.add({
     timeOfertante,
     aceitoPor: oponente,
     quadra,
-    data: dataStr,              // salva string original (mais seguro)
-    dataTimestamp: dataLocal,   // salva também como Date correta
+    data,
     hora,
     status: oponente ? "confirmado" : "disponivel",
     dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
@@ -332,10 +327,8 @@ async function salvarOferta() {
   carregarOfertas();
 }
 
-}
-
 // ==============================
-// 🔄 CARREGAR OFERTAS (FUSO CORRIGIDO)
+// 🔄 CARREGAR OFERTAS (CORRIGIDO)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
@@ -350,21 +343,16 @@ async function carregarOfertas() {
   snap.forEach(doc => {
     const o = doc.data();
     const id = doc.id;
-
-    // 🔥 FORMATA DATA SEM UTC
-    let dataFmt = "";
-    if (o.data) {
-      const [ano, mes, dia] = o.data.split("-");
-      dataFmt = `${dia}/${mes}/${ano}`;
-    }
-
+    const dataFmt = o.data ? new Date(o.data).toLocaleDateString('pt-BR') : "";
     const status = o.status === "confirmado" ? "status-confirmado" : "status-disponivel";
     const txt = o.status === "confirmado" ? "✅ Confirmado" : "⏳ Disponível";
 
     let botoes = "";
 
+    // ✅ CORRIGIDO: Botões funcionam perfeitamente!
     if (usuarioAtual) {
       if (!o.aceitoPor && usuarioAtual.isAdmin) {
+        // Admin pode escolher quem aceita
         botoes = `
           <div class="btn-group">
             <select id="aceitarTime_${id}">
@@ -373,6 +361,7 @@ async function carregarOfertas() {
             <button class="btn btn-aceitar" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar</button>
           </div>`;
       } else if (!o.aceitoPor && usuarioAtual.nome !== o.timeOfertante) {
+        // ✅ TIME NORMAL VÊ BOTÃO ACEITAR (Matrix vê oferta do Iron)
         botoes = `<button class="btn btn-aceitar" style="width:100%;" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar jogo</button>`;
       }
 
@@ -396,8 +385,6 @@ async function carregarOfertas() {
   });
 
   lista.innerHTML = html;
-}
-
 }
 
 // ==============================
