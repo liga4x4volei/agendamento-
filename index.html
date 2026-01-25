@@ -5,7 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🏐 Liga 4x4 - Agendamentos</title>
 
+<!-- ✅ NOVO: Bloqueia datas passadas -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+    document.getElementById('dataInput').min = minDate;
+  });
+</script>
+
 <style>
+/* ... todo o CSS atual permanece igual ... */
+
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial;}
 body{
   background:linear-gradient(90deg,#004aad 0%,#3db2ff 100%);
@@ -330,7 +342,7 @@ async function salvarOferta() {
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS (CORRIGIDO!)
+// 🔄 CARREGAR OFERTAS (MELHORADO!)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
@@ -341,12 +353,25 @@ async function carregarOfertas() {
     return;
   }
 
-  let html = "";
+  // ✅ NOVO: Pega TODAS ofertas e ordena por DATA DO JOGO (mais próximas primeiro)
+  const ofertas = [];
   snap.forEach(doc => {
     const o = doc.data();
-    const id = doc.id;
+    if (o.data) {
+      const dataJogo = new Date(o.data);
+      ofertas.push({ id: doc.id, data: o, dataObj: dataJogo });
+    }
+  });
+
+  // Ordena: datas mais próximas PRIMEIRO
+  ofertas.sort((a, b) => a.dataObj - b.dataObj);
+
+  let html = "<h2 style='text-align:center;margin:20px 0 10px;'>📅 Por ordem de jogo (mais próximas primeiro)</h2>";
+  
+  ofertas.forEach(oferta => {
+    const o = oferta.data;
+    const id = oferta.id;
     
-    // ✅ CORREÇÃO: Formata data salva como string ISO para pt-BR local
     let dataFmt = '';
     if (o.data) {
       const dataObj = new Date(o.data);
@@ -357,7 +382,7 @@ async function carregarOfertas() {
     const txt = o.status === "confirmado" ? "✅ Confirmado" : "⏳ Disponível";
 
     let botoes = "";
-
+    // ... resto dos botões permanece IGUAL ...
     if (usuarioAtual) {
       if (!o.aceitoPor && usuarioAtual.isAdmin) {
         botoes = `
@@ -391,6 +416,7 @@ async function carregarOfertas() {
   });
 
   lista.innerHTML = html;
+}
 }
 
 // ==============================
@@ -454,3 +480,4 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
+
