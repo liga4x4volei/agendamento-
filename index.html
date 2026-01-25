@@ -5,18 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🏐 Liga 4x4 - Agendamentos</title>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  document.getElementById('dataInput').min = tomorrow.toISOString().split('T')[0];
-});
-</script>
-
-
 <style>
-/* ... todo o CSS atual permanece igual ... */
-
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial;}
 body{
   background:linear-gradient(90deg,#004aad 0%,#3db2ff 100%);
@@ -257,7 +246,7 @@ function entrar() {
   document.getElementById('loginScreen').style.display = 'none';
   alert(`✅ Logado como ${usuarioAtual.isAdmin ? "ADMIN" : usuarioAtual.nome}`);
   document.getElementById("btnFlutuante").onclick = novaOferta;
-  ();
+  carregarOfertas();
 }
 
 // ==============================
@@ -337,45 +326,27 @@ async function salvarOferta() {
 
   alert("✅ Oferta criada com sucesso!");
   fecharModal();
-  ();
+  carregarOfertas();
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS (MELHORADO!)
+// 🔄 CARREGAR OFERTAS (CORRIGIDO!)
 // ==============================
-  // ✅ FUNÇÃO PARA ORDENAR POR DATA
-function ordenarPorData(ofertas) {
-  return ofertas.sort((a, b) => new Date(a.data) - new Date(b.data));
-}
-
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
-const snap = await REF.get();  // Remove orderBy
+  const snap = await REF.orderBy("dataCriacao", "desc").get();
   
   if (snap.empty) {
     lista.innerHTML = "<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta ainda</div>";
     return;
   }
 
-  // ✅ NOVO: Pega TODAS ofertas e ordena por DATA DO JOGO (mais próximas primeiro)
-  const ofertas = [];
+  let html = "";
   snap.forEach(doc => {
     const o = doc.data();
-    if (o.data) {
-      const dataJogo = new Date(o.data);
-      ofertas.push({ id: doc.id, data: o, dataObj: dataJogo });
-    }
-  });
-
-  // Ordena: datas mais próximas PRIMEIRO
-  ofertas.sort((a, b) => a.dataObj - b.dataObj);
-
-  let html = "<h2 style='text-align:center;margin:20px 0 10px;'>📅 Por ordem de jogo (mais próximas primeiro)</h2>";
-  
-  ofertas.forEach(oferta => {
-    const o = oferta.data;
-    const id = oferta.id;
+    const id = doc.id;
     
+    // ✅ CORREÇÃO: Formata data salva como string ISO para pt-BR local
     let dataFmt = '';
     if (o.data) {
       const dataObj = new Date(o.data);
@@ -386,7 +357,7 @@ const snap = await REF.get();  // Remove orderBy
     const txt = o.status === "confirmado" ? "✅ Confirmado" : "⏳ Disponível";
 
     let botoes = "";
-    // ... resto dos botões permanece IGUAL ...
+
     if (usuarioAtual) {
       if (!o.aceitoPor && usuarioAtual.isAdmin) {
         botoes = `
@@ -420,7 +391,6 @@ const snap = await REF.get();  // Remove orderBy
   });
 
   lista.innerHTML = html;
-}
 }
 
 // ==============================
@@ -484,5 +454,3 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
-
-
