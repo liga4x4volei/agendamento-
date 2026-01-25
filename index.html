@@ -330,34 +330,38 @@ async function salvarOferta() {
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS (CORRIGIDO!)
+// 🔄 CARREGAR OFERTAS (POR DATA!)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
-  const snap = await REF.orderBy("dataCriacao", "desc").get();
+  const snap = await REF.get();  // Pega TODAS ofertas
   
   if (snap.empty) {
     lista.innerHTML = "<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta ainda</div>";
     return;
   }
 
-  let html = "";
+  // ✅ COLETA e ORDENA por data do jogo (mais próximas primeiro)
+  const ofertas = [];
   snap.forEach(doc => {
     const o = doc.data();
-    const id = doc.id;
-    
-    // ✅ CORREÇÃO: Formata data salva como string ISO para pt-BR local
-    let dataFmt = '';
     if (o.data) {
-      const dataObj = new Date(o.data);
-      dataFmt = dataObj.toLocaleDateString('pt-BR');
+      ofertas.push({id: doc.id, data: o});
     }
-    
+  });
+
+  // ✅ ORDENA: datas mais próximas PRIMEIRO
+  ofertas.sort((a, b) => new Date(a.data.data) - new Date(b.data.data));
+
+  let html = "";
+  ofertas.forEach(item => {
+    const o = item.data;
+    const id = item.id;
+    const dataFmt = new Date(o.data).toLocaleDateString('pt-BR');
     const status = o.status === "confirmado" ? "status-confirmado" : "status-disponivel";
     const txt = o.status === "confirmado" ? "✅ Confirmado" : "⏳ Disponível";
 
     let botoes = "";
-
     if (usuarioAtual) {
       if (!o.aceitoPor && usuarioAtual.isAdmin) {
         botoes = `
@@ -454,4 +458,5 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
+
 
