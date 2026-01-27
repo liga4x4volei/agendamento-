@@ -311,14 +311,23 @@ async function salvarOferta() {
     return;
   }
 
-  // ✅ CORREÇÃO: Salva data como ISO string LOCAL (+03:00 Brasil)
+  // 🔥 NOVO: Verifica limite GLOBAL de 3 ofertas disponíveis (TODAS as equipes)
+  const q = REF.where("status", "==", "disponivel");
+  const snap = await q.get();
+  const countTotalDisponivel = snap.size;
+
+  if (countTotalDisponivel >= 3) {
+    alert(`❌ Limite global atingido! Já existem ${countTotalDisponivel} oferta(s) disponível(is). Aceite/cancele alguma para criar nova.`);
+    return;
+  }
+
   const dataLocal = new Date(dataInput + 'T' + hora + ':00-03:00').toISOString();
   
   await REF.add({
     timeOfertante,
     aceitoPor: oponente,
     quadra,
-    data: dataLocal,  // Agora salva correto!
+    data: dataLocal,
     hora,
     status: oponente ? "confirmado" : "disponivel",
     dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
@@ -334,6 +343,15 @@ async function salvarOferta() {
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
+
+  // 🔥 Contador global de disponíveis
+const qCount = REF.where("status", "==", "disponivel");
+const snapCount = await qCount.get();
+const totalDisp = snapCount.size;
+lista.innerHTML = `<div style="text-align:center;padding:15px;background:rgba(255,193,7,0.3);border-radius:12px;margin-bottom:20px;">
+  📊 ${totalDisp}/3 ofertas disponíveis no total
+</div>`;
+
   const snap = await REF.get();  // Pega TODAS ofertas
   
   if (snap.empty) {
@@ -458,6 +476,7 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
+
 
 
 
