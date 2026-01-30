@@ -339,18 +339,18 @@ async function salvarOferta() {
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS (POR DATA!)
+// 🔄 CARREGAR OFERTAS (POR STATUS + DATA!)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
 
   // 🔥 Contador global de disponíveis
-const qCount = REF.where("status", "==", "disponivel");
-const snapCount = await qCount.get();
-const totalDisp = snapCount.size;
-lista.innerHTML = `<div style="text-align:center;padding:15px;background:rgba(255,193,7,0.3);border-radius:12px;margin-bottom:20px;">
-  📊 ${totalDisp}/3 ofertas disponíveis no total
-</div>`;
+  const qCount = REF.where("status", "==", "disponivel");
+  const snapCount = await qCount.get();
+  const totalDisp = snapCount.size;
+  lista.innerHTML = `<div style="text-align:center;padding:15px;background:rgba(255,193,7,0.3);border-radius:12px;margin-bottom:20px;">
+    📊 ${totalDisp}/3 ofertas disponíveis no total
+  </div>`;
 
   const snap = await REF.get();  // Pega TODAS ofertas
   
@@ -359,7 +359,7 @@ lista.innerHTML = `<div style="text-align:center;padding:15px;background:rgba(25
     return;
   }
 
-  // ✅ COLETA e ORDENA por data do jogo (mais próximas primeiro)
+  // ✅ COLETA ofertas
   const ofertas = [];
   snap.forEach(doc => {
     const o = doc.data();
@@ -368,8 +368,18 @@ lista.innerHTML = `<div style="text-align:center;padding:15px;background:rgba(25
     }
   });
 
-  // ✅ ORDENA: datas mais próximas PRIMEIRO
-  ofertas.sort((a, b) => new Date(a.data.data) - new Date(b.data.data));
+  // 🔥 NOVO: ORDENA - DISPONÍVEIS PRIMEIRO (por data), DEPOIS CONFIRMADOS (por data)
+  ofertas.sort((a, b) => {
+    const statusA = a.data.status;
+    const statusB = b.data.status;
+    
+    // Disponíveis (0) vêm ANTES dos confirmados (1)
+    if (statusA === "disponivel" && statusB === "confirmado") return -1;
+    if (statusA === "confirmado" && statusB === "disponivel") return 1;
+    
+    // Mesma categoria: ordena por data (mais próximas primeiro)
+    return new Date(a.data.data) - new Date(b.data.data);
+  });
 
   let html = "";
   ofertas.forEach(item => {
@@ -476,8 +486,3 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
-
-
-
-
-
