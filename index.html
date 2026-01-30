@@ -461,7 +461,7 @@ async function limparAntigos() {
   const agora = Date.now();
   for (const doc of snap.docs) {
     const d = doc.data();
-    if (d.dataAceite && (agora - d.dataAceite.toDate().getTime()) > 8 * 24 * 60 * 60 * 1000) {
+    if (d.dataAceite && (agora - d.dataAceite.toDate().getTime()) > 7 * 24 * 60 * 60 * 1000) {
       await REF.doc(doc.id).delete();
     }
   }
@@ -476,6 +476,7 @@ document.getElementById("btnFlutuante").onclick = abrirModal;
 </script>
 </body>
 </html>
+
 
 
 
