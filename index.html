@@ -24,7 +24,7 @@ body{
 /* Títulos */
 h1,h2{text-align:center;font-weight:800;}
 h1{font-size:28px;margin-bottom:10px;}
-h2{font-size:20px;margin:30px 0 15px;color:rgba(255,255,255,0.9);}
+h2{font-size:22px;margin:25px 0 15px 0;color:#fff;font-weight:800;text-shadow:0 2px 4px rgba(0,0,0,0.3);}
 
 /* Ofertas */
 .ofertas{max-height:60vh;overflow-y:auto;}
@@ -283,7 +283,7 @@ function fecharModal() {
 }
 
 // ==============================
-// 💾 SALVAR NOVA OFERTA (CORRIGIDO!)
+// 💾 SALVAR NOVA OFERTA
 // ==============================
 async function salvarOferta() {
   if (!usuarioAtual) {
@@ -311,13 +311,12 @@ async function salvarOferta() {
     return;
   }
 
-  // 🔥 NOVO: Verifica limite GLOBAL de 3 ofertas disponíveis (TODAS as equipes)
   const q = REF.where("status", "==", "disponivel");
   const snap = await q.get();
   const countTotalDisponivel = snap.size;
 
   if (countTotalDisponivel >= 3) {
-    alert(`❌ Limite global atingido! Já existem ${countTotalDisponivel} oferta(s) disponível(is). Aceite/cancele alguma para criar nova.`);
+    alert(`❌ Limite global atingido! Já existem ${countTotalDisponivel} oferta(s) disponível(is).`);
     return;
   }
 
@@ -339,7 +338,7 @@ async function salvarOferta() {
 }
 
 // ==============================
-// 🔄 CARREGAR OFERTAS (POR STATUS + DATA!)
+// 🔄 CARREGAR OFERTAS (SEPARADO POR STATUS!)
 // ==============================
 async function carregarOfertas() {
   const lista = document.getElementById('listaOfertas');
@@ -348,18 +347,15 @@ async function carregarOfertas() {
   const qCount = REF.where("status", "==", "disponivel");
   const snapCount = await qCount.get();
   const totalDisp = snapCount.size;
-  lista.innerHTML = `<div style="text-align:center;padding:15px;background:rgba(255,193,7,0.3);border-radius:12px;margin-bottom:20px;">
-    📊 ${totalDisp}/3 ofertas disponíveis no total
-  </div>`;
 
-  const snap = await REF.get();  // Pega TODAS ofertas
+  const snap = await REF.get();
   
   if (snap.empty) {
     lista.innerHTML = "<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta ainda</div>";
     return;
   }
 
-  // ✅ COLETA ofertas
+  // ✅ COLETA todas ofertas
   const ofertas = [];
   snap.forEach(doc => {
     const o = doc.data();
@@ -368,59 +364,97 @@ async function carregarOfertas() {
     }
   });
 
-  // 🔥 NOVO: ORDENA - DISPONÍVEIS PRIMEIRO (por data), DEPOIS CONFIRMADOS (por data)
-  ofertas.sort((a, b) => {
-    const statusA = a.data.status;
-    const statusB = b.data.status;
-    
-    // Disponíveis (0) vêm ANTES dos confirmados (1)
-    if (statusA === "disponivel" && statusB === "confirmado") return -1;
-    if (statusA === "confirmado" && statusB === "disponivel") return 1;
-    
-    // Mesma categoria: ordena por data (mais próximas primeiro)
-    return new Date(a.data.data) - new Date(b.data.data);
-  });
+  // 🔥 OPÇÃO 2: SEPARA E ORDENA POR STATUS
+  const disponiveis = ofertas.filter(o => o.data.status === "disponivel");
+  const confirmados = ofertas.filter(o => o.data.status === "confirmado");
 
-  let html = "";
-  ofertas.forEach(item => {
-    const o = item.data;
-    const id = item.id;
-    const dataFmt = new Date(o.data).toLocaleDateString('pt-BR');
-    const status = o.status === "confirmado" ? "status-confirmado" : "status-disponivel";
-    const txt = o.status === "confirmado" ? "✅ Confirmado" : "⏳ Disponível";
+  // Ordena cada grupo por data (mais próximas primeiro)
+  disponiveis.sort((a, b) => new Date(a.data.data) - new Date(b.data.data));
+  confirmados.sort((a, b) => new Date(a.data.data) - new Date(b.data.data));
 
-    let botoes = "";
-    if (usuarioAtual) {
-      if (!o.aceitoPor && usuarioAtual.isAdmin) {
-        botoes = `
-          <div class="btn-group">
-            <select id="aceitarTime_${id}">
-              ${Object.values(SENHAS_TIMES).filter(t => t !== "ADMIN").map(t => `<option>${t}</option>`).join('')}
-            </select>
-            <button class="btn btn-aceitar" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar</button>
-          </div>`;
-      } else if (!o.aceitoPor && usuarioAtual.nome !== o.timeOfertante) {
-        botoes = `<button class="btn btn-aceitar" style="width:100%;" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar jogo</button>`;
+  let html = `<div style="text-align:center;padding:15px;background:rgba(255,193,7,0.3);border-radius:12px;margin-bottom:20px;">
+    📊 ${totalDisp}/3 ofertas disponíveis no total
+  </div>`;
+
+  // ✅ SEÇÃO DISPONÍVEIS (SEMPRE EM CIMA)
+  if (disponiveis.length > 0) {
+    html += `<h2 style="color:#ffc107;margin-top:0;">⏳ OFERTAS DISPONÍVEIS (${disponiveis.length})</h2>`;
+    disponiveis.forEach(item => {
+      const o = item.data;
+      const id = item.id;
+      const dataFmt = new Date(o.data).toLocaleDateString('pt-BR');
+      const status = "status-disponivel";
+      const txt = "⏳ Disponível";
+
+      let botoes = "";
+      if (usuarioAtual) {
+        if (!o.aceitoPor && usuarioAtual.isAdmin) {
+          botoes = `
+            <div class="btn-group">
+              <select id="aceitarTime_${id}">
+                ${Object.values(SENHAS_TIMES).filter(t => t !== "ADMIN").map(t => `<option>${t}</option>`).join('')}
+              </select>
+              <button class="btn btn-aceitar" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar</button>
+            </div>`;
+        } else if (!o.aceitoPor && usuarioAtual.nome !== o.timeOfertante) {
+          botoes = `<button class="btn btn-aceitar" style="width:100%;" onclick="aceitarOferta('${id}', '${o.timeOfertante}')">✅ Aceitar jogo</button>`;
+        }
+
+        if (usuarioAtual.isAdmin || usuarioAtual.nome === o.timeOfertante) {
+          botoes += `<button class="btn btn-cancelar" style="width:100%;margin-top:8px;" onclick="cancelarOferta('${id}')">❌ Cancelar</button>`;
+        }
       }
 
-      if (usuarioAtual.isAdmin || usuarioAtual.nome === o.timeOfertante) {
-        botoes += `<button class="btn btn-cancelar" style="width:100%;margin-top:8px;" onclick="cancelarOferta('${id}')">❌ Cancelar</button>`;
-      }
-    }
+      html += `
+        <div class="oferta">
+          <div class="oferta-header">
+            <h3>${o.quadra} – ${o.hora}</h3>
+            <span class="status ${status}">${txt}</span>
+          </div>
+          <div class="oferta-detalhes">
+            📅 <b>${dataFmt}</b><br>
+            🏐 <b>${o.timeOfertante}</b> (aguardando...)
+          </div>
+          ${botoes ? `<div style="margin-top:15px;">${botoes}</div>` : ""}
+        </div>`;
+    });
+  }
 
-    html += `
-      <div class="oferta">
-        <div class="oferta-header">
-          <h3>${o.quadra} – ${o.hora}</h3>
-          <span class="status ${status}">${txt}</span>
-        </div>
-        <div class="oferta-detalhes">
-          📅 <b>${dataFmt}</b><br>
-          🏐 <b>${o.timeOfertante}</b>${o.aceitoPor ? ` x <b>${o.aceitoPor}</b>` : " (aguardando...)"}
-        </div>
-        ${botoes ? `<div style="margin-top:15px;">${botoes}</div>` : ""}
-      </div>`;
-  });
+  // ✅ SEÇÃO CONFIRMADOS (EMBAIXO)
+  if (confirmados.length > 0) {
+    html += `<h2 style="color:#28a745;">✅ JOGOS CONFIRMADOS (${confirmados.length})</h2>`;
+    confirmados.forEach(item => {
+      const o = item.data;
+      const id = item.id;
+      const dataFmt = new Date(o.data).toLocaleDateString('pt-BR');
+      const status = "status-confirmado";
+      const txt = "✅ Confirmado";
+
+      let botoes = "";
+      if (usuarioAtual) {
+        if (usuarioAtual.isAdmin || usuarioAtual.nome === o.timeOfertante) {
+          botoes = `<button class="btn btn-cancelar" style="width:100%;" onclick="cancelarOferta('${id}')">❌ Cancelar</button>`;
+        }
+      }
+
+      html += `
+        <div class="oferta">
+          <div class="oferta-header">
+            <h3>${o.quadra} – ${o.hora}</h3>
+            <span class="status ${status}">${txt}</span>
+          </div>
+          <div class="oferta-detalhes">
+            📅 <b>${dataFmt}</b><br>
+            🏐 <b>${o.timeOfertante}</b> x <b>${o.aceitoPor}</b>
+          </div>
+          ${botoes ? `<div style="margin-top:15px;">${botoes}</div>` : ""}
+        </div>`;
+    });
+  }
+
+  if (!disponiveis.length && !confirmados.length) {
+    html = "<div style='text-align:center;padding:20px;'>📭 Nenhuma oferta ainda</div>";
+  }
 
   lista.innerHTML = html;
 }
